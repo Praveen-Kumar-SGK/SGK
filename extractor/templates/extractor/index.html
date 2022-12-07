@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/assets/extractor/static/css/index.css?v3" rel="stylesheet" type="text/css">
+    <script crossorigin="anonymous" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+    <div class="s010">
+      <form>
+        <div class="inner-form">
+          <div class="basic-search">
+            <div class="input-field">
+              <!--input id="search" type="text" placeholder="Type Keywords"-->
+              <textarea id="search" placeholder="Query"></textarea>
+              <!--button id="search-button" onclick="classifier_call();">Search</button-->
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+<script>
+    document.querySelector('#search').onkeyup = function(e){
+        if (e.keyCode == 13) {
+          classifier_call();
+        }
+    };
+
+    function classifier_call(){
+        var text = $('#search').val();
+        console.log(text)
+        $.ajax({
+            url: 'doc_extractor/?file='+text+'',
+            success: function(data){
+              $('.advance-search').remove();
+              $('.inner-form').append(data);
+              $('#search').val("");
+            }
+        });
+
+        /*$.ajax({
+            url: 'classifier/?text='+text+'',
+            success: function(data){
+              $('.advance-search').remove();
+              $('.inner-form').append(data);
+              $('#search').val("");
+            }
+        });*/
+    }
+</script>
+</body>
+</html>

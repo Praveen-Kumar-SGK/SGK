@@ -1,0 +1,3 @@
+#MODE = 'local'
+
+MODE = 'dev'

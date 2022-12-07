@@ -1,0 +1,17 @@
+          {% if result %}
+          {% for cate , list in result.items %}
+          <div class="advance-search">
+            {% for text in list %}
+            <!--span class="desc">Result</span-->
+            <div class="row">
+              <div class="input-field">
+                  <span id="key">{{text}}</span>
+              </div>
+              <div class="input-field">
+                  <span id="value">{{cate|capfirst}}</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+          {% endif %}
