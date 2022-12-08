@@ -383,7 +383,7 @@ def attribute(input_pdf,pages,text):
 
     html = BeautifulSoup(output_io.getvalue(), 'html.parser')
     results = html.find_all(
-        lambda tag: tag.name == "div" and fuzz.ratio(text.lower(),tag.text.lower().replace('/n',''))>65)
+        lambda tag: tag.name == "div" and fuzz.ratio(text.lower(),tag.text.lower().replace('/n',''))>66)
     # print(results)
     if results:
         if 'bold' in str(results[-1]).lower():
