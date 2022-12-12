@@ -26,7 +26,6 @@ from .excel_processing import smb_password,smb_username,laser,classify,model_loc
 # input_pdf = f"FLC-8202-5773-0-21130-14773-SR-GIRASOLI WITH GORGONZOLA AND WALNUT-BERTAGNI-V1.pdf"
 # input_pdf = f"FLC-8466-5785-0-2113013258-Signature Farms-S FARMS VEGGIE TRAY W_DIP-40OZ-BRAGA-V1.pdf"
 
-temp_directory = tempfile.TemporaryDirectory(dir=document_location)
 classifier = joblib.load(model_location)
 
 is_df_with_multiple_columns = lambda table,threshold: True if any([True for row in table if len(row) > threshold]) or len([True for row in table if len(row) > 1]) > threshold else False
@@ -502,6 +501,7 @@ def get_smb_or_local(input_pdf,input_pdf_location):
         return document_location+input_pdf
 
 def albertson_amer_main(input_pdf,pages):
+    temp_directory = tempfile.TemporaryDirectory(dir=document_location)
     input_pdf_location = f'{temp_directory.name}/input_pdf.pdf'
     print("temp_dir------->",temp_directory.name)
     input_pdf = get_smb_or_local(input_pdf,input_pdf_location)
