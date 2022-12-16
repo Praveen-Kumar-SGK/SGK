@@ -283,13 +283,17 @@ def group_by_header(df):
         if len(list(value)) == 1:
             temp_list.extend(df.loc[list(value)[0]].to_list()[1:])
         else:
-            for row_index in list(value):
-                for column in columns[1:]:
+            for column in columns[1:]:
+                column_list = []
+                for row_index in list(value):
                     cell_value = df[column][row_index]
                     if str(cell_value).strip() and not pd.isna(cell_value):
-                        temp_list.append(cell_value)
-        final_content = '\n'.join([str(item) for item in temp_list if not pd.isna(item)])
-        overall_list.append([key,final_content])
+                        column_list.append(cell_value)
+                else:
+                    temp_list.append("\n".join(column_list))
+        # final_content = '\n'.join([str(item) for item in temp_list if not pd.isna(item)])
+        for content in temp_list:
+            overall_list.append([key,content])
     return pd.DataFrame(overall_list)
 
 def normalizing_content(feed_from_camelot):
@@ -347,7 +351,8 @@ def normalizing_content(feed_from_camelot):
                 df[df.columns[0]].fillna(method='ffill', axis=0, inplace=True)
                 df[df.columns[0]].fillna(method='bfill', axis=0, inplace=True)
                 # print("df after drop 2st column---->", tabulate(df, tablefmt="grid"))
-                if not any([True if str(value).strip().lower() == "other" or "(g)" in str(value) else False for value in df[df.columns[0]] if not pd.isna(value)]):
+                # if not any([True if str(value).strip().lower() == "other" or "(g)" in str(value) else False for value in df[df.columns[0]] if not pd.isna(value)]):
+                if not any([True if "(g)" in str(value) else False for value in df[df.columns[0]] if not pd.isna(value)]):
                     df = group_by_header(df)
                 # df = duplicate_removal_by_row_indexing(df)
                     # print("df after drop 2st column grouped---->", tabulate(df, tablefmt="grid"))
@@ -390,7 +395,7 @@ def nutrition_processing(df):
             if header:
                 for _col in columns[1:]:
                     value = str(df[_col][row]).strip()
-                    value = [val for val in set(re.findall(r"(\d*)",value)) if str(val).strip()]
+                    value = [val for val in set(re.findall(r"(\d*\.?\d*)",value)) if str(val).strip()]
                     if value:
                         value = value[0]
                     else:
