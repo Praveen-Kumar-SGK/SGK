@@ -385,17 +385,38 @@ def attribute(input_pdf,pages,text):
     results = html.find_all(
         lambda tag: tag.name == "div" and fuzz.ratio(text.lower(),tag.text.lower().replace('/n',''))>66)
     # print(results)
-    if results:
+    if len(results) == 1:
         if 'bold' in str(results[-1]).lower():
             for span in results[-1]:
                 if 'bold' in span['style'].lower():
-                    new_text= span.text.split('\n')
+                    new_text = span.text.split('\n')
                     text_out.append(f'<b>{new_text[0]}</b>')
                 if 'bold' not in span['style'].lower():
-    #                 print('yes')
-                    new_text= span.text.split('\n')
+                    #                 print('yes')
+                    new_text = span.text.split('\n')
                     text_out.append(new_text[0])
             # print(' '.join(text_out))
+            return ''.join(text_out)
+        else:
+            return None
+    elif len(results) > 1:
+        ind = []
+        for index in range(0, len(results)):
+            text_list = []
+            for span in results[index]:
+                text_list.append(span.text)
+            if text_list:
+                output = fuzz.ratio(text.lower(), "".join(text_list).replace('/n', '')) > 80
+                if output:
+                    ind.append(index)
+        if 'bold' in str(results[ind[-1]]).lower():
+            for span in results[ind[-1]]:
+                if 'bold' in span['style'].lower():
+                    new_text = span.text.split('\n')
+                    text_out.append(f'<b>{new_text[0]}</b>')
+                if 'bold' not in span['style'].lower():
+                    new_text = span.text.split('\n')
+                    text_out.append(new_text[0])
             return ''.join(text_out)
         else:
             return None
