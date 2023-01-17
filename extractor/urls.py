@@ -47,6 +47,7 @@ urlpatterns = [
     re_path(r"ferrero_cep\/$", views.ferrero_cep, name='ferrero_cep'),
     re_path(r"beiersdorf\/$", views.beiersdorf_cep, name='beiersdorf_cep'),
     re_path(r"kimberly_cep\/$", views.kimberly_cep, name='kimberly_cep'),
+    re_path(r"cocacola_cep\/$", views.cocacola_cep, name='cocacola_cep'),
     ]
 
 

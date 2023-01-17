@@ -192,3 +192,6 @@ beiersdorf_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/beiersdorf_
 
 ## Kimberly_cep_model_loc
 kimberly_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/kimberly_cep_model.sav"
+
+## Cocacola_cep_model_loc
+cocacola_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/cep_cola_model.sav"
