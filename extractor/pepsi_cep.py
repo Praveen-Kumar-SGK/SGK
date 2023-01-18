@@ -45,23 +45,21 @@ class Pepsi_CEP_Template:
     def dict_to_list(self, dictionary):
         final_list = []
         global nutri_table_available
-        for layer, layer_value in dictionary.items():
-            if layer in ["data"]:
-                for key, value in layer_value.items():
-                    for data_dict in value:
-                        for text_frame_no, txt in data_dict.items():
-                            item = re.sub(str(self.splt_parameter), lambda pat: pat.group(1) + "*#" + pat.group(2), txt,
-                                          flags=re.M)  ## For applying into multi line content
-                            item = str(item).split("*#")
-                            itms = []
-                            for itm in item:
-                                itms.extend(str(itm).split("\r"))
+        for key, value in dictionary.items():
+            for data_dict in value:
+                for text_frame_no, txt in data_dict.items():
+                    item = re.sub(str(self.splt_parameter), lambda pat: pat.group(1) + "*#" + pat.group(2), txt,
+                                  flags=re.M)  ## For applying into multi line content
+                    item = str(item).split("*#")
+                    itms = []
+                    for itm in item:
+                        itms.extend(str(itm).split("\r"))
 
-                            for k in itms:
-                                if k.strip():
-                                    if self.is_nutrition_table_available(self.text_preprocessing(k.split(":")[0])):
-                                        nutri_table_available = True
-                                    final_list.append(k.strip())
+                    for k in itms:
+                        if k.strip():
+                            if self.is_nutrition_table_available(self.text_preprocessing(k.split(":")[0])):
+                                nutri_table_available = True
+                            final_list.append(k.strip())
         return final_list
 
     def language_detection(self, value, language=None):  # lang Module need to update
