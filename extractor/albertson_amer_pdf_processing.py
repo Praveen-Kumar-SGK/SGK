@@ -145,11 +145,11 @@ def draw_contours_over_pdf(input_pdf,image,tree=None,area=10000,page_index=1,thi
     doc.saveIncr()
     return "success"
 
-def draw_tables_over_pdf(input_pdf,location_to_save_image="/Users/vijaykanagaraj/PycharmProjects/testing/"):
+def draw_tables_over_pdf(input_pdf,location_to_save_image):
     len_pages = pdf_to_image(input_pdf, location=location_to_save_image)
     for index in range(len_pages):
         # img = cv2.imread(f"{location_to_save_image}{index + 1}.png")
-        processed_image = image_processing_v1(f"{location_to_save_image}{index + 1}.png")
+        processed_image = image_processing_v1(f"{location_to_save_image}/{index + 1}.png")
         draw_contours_over_pdf(input_pdf, processed_image, tree=True, page_index=index, thickness=0.5)
     return len_pages
 
@@ -309,9 +309,10 @@ def albertson_amer_main(input_pdf,page_numbers):
     final_dict = {}
     temp_directory = tempfile.TemporaryDirectory(dir=document_location)
     target_pdf = f"{temp_directory.name}/input.pdf"
-    input_pdf = get_smb_or_local(input_pdf,f"{temp_directory.name}/")
-    shutil.copy(input_pdf,target_pdf)
-    len_pages = draw_tables_over_pdf(input_pdf=target_pdf,location_to_save_image=f"{temp_directory.name}/")
+    target_pdf = get_smb_or_local(input_pdf,target_pdf)
+    print("target_pdf------>",target_pdf)
+    # shutil.copy(input_pdf,target_pdf)
+    len_pages = draw_tables_over_pdf(input_pdf=target_pdf,location_to_save_image=temp_directory.name)
     # assert status == "success" , "pdf table and image conversion issue"
     print(range(len_pages))
 
