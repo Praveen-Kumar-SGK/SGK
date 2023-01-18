@@ -195,3 +195,6 @@ kimberly_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/kimberly_cep_
 
 ## Cocacola_cep_model_loc
 cocacola_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/cep_cola_model.sav"
+
+## Peppsi_cep_model_loc
+pepsi_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/pepsico_cep.sav"

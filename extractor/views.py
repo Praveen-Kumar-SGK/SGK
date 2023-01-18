@@ -75,6 +75,7 @@ from .heinz import heinz_main
 from .beiersdorf_cep import beiersdorf_cep_main
 from .kimberly_cep import CEP_Template
 from .cocacola_cep import Cocacola_CEP_Template
+from .pepsi_cep import Pepsi_CEP_Template
 
 import smbclient
 from environment import MODE
@@ -524,7 +525,23 @@ def cocacola_cep(request):
     else:
         logger(account_type="CEP", input_body={"account":"Cocacola", "file": str(body)}, output=str(result)).save()
         return JsonResponse(result)
-    
+
+
+@csrf_exempt
+def pepsi_cep(request):
+    json_response = request.body.decode('utf-8')
+    body = json.loads(json_response)
+    print(body)
+    try:
+        result = Pepsi_CEP_Template().pepsi_cep_main(body)
+    except Exception as E:
+        logger(account_type="CEP", input_body={"account": "Pepsi", "file": str(body)},
+               output=str(E), error=str(E)).save()
+        return JsonResponse({})
+    else:
+        logger(account_type="CEP", input_body={"account": "Pepsi", "file": str(body)}, output=str(result)).save()
+        return JsonResponse(result)
+
 @csrf_exempt
 def language_detection(request):
     langs = set()
