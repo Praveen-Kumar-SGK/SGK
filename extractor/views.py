@@ -76,6 +76,7 @@ from .beiersdorf_cep import beiersdorf_cep_main
 from .kimberly_cep import CEP_Template
 from .cocacola_cep import Cocacola_CEP_Template
 from .pepsi_cep import Pepsi_CEP_Template
+from .home_and_laundry_cep import Home_and_laundry_CEP_Template
 
 import smbclient
 from environment import MODE
@@ -540,6 +541,21 @@ def pepsi_cep(request):
         return JsonResponse({})
     else:
         logger(account_type="CEP", input_body={"account": "Pepsi", "file": str(body)}, output=str(result)).save()
+        return JsonResponse(result)
+
+@csrf_exempt
+def home_and_laundry_cep(request):
+    json_response = request.body.decode('utf-8')
+    body = json.loads(json_response)
+    print(body)
+    try:
+        result = Home_and_laundry_CEP_Template().home_and_laundry_cep_main(body)
+    except Exception as E:
+        logger(account_type="CEP", input_body={"account": "Home_and_Laundry", "file": str(body)},
+               output=str(E), error=str(E)).save()
+        return JsonResponse({})
+    else:
+        logger(account_type="CEP", input_body={"account": "Home_and_Laundry", "file": str(body)}, output=str(result)).save()
         return JsonResponse(result)
 
 @csrf_exempt
