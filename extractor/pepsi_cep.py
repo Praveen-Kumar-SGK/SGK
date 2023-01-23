@@ -20,7 +20,7 @@ class Pepsi_CEP_Template:
     def is_nutrition_table_available(self,text):
         # print("**********", text)
         nutri_header = ['INFORMASI NILAI GIZI', 'nutrition information', 'nutrition information typical values',
-                        'nutrition declaration']
+                        'nutrition declaration','Nutritivne vrijednosti']
         similarity = cosine_similarity(laser.embed_sentences(text, lang='en'),
                                        laser.embed_sentences(nutri_header, lang='en').mean(0).reshape(1, 1024))[0][0]
         # print("**********",text,"&&&&&&&&&&&&",similarity)
