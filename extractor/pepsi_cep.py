@@ -20,7 +20,7 @@ class Pepsi_CEP_Template:
     def is_nutrition_table_available(self,text):
         # print("**********", text)
         nutri_header = ['INFORMASI NILAI GIZI', 'nutrition information', 'nutrition information typical values',
-                        'nutrition declaration','Nutritivne vrijednosti']
+                        'nutrition declaration','Nutritivne vrijednosti','Durchschnittliche Nährwerte']
         similarity = cosine_similarity(laser.embed_sentences(text, lang='en'),
                                        laser.embed_sentences(nutri_header, lang='en').mean(0).reshape(1, 1024))[0][0]
         # print("**********",text,"&&&&&&&&&&&&",similarity)
@@ -136,7 +136,8 @@ class Pepsi_CEP_Template:
         nutrition_dict_exception = {}
         for nutrition_row_dict in input_list:
             nutrition_header_original = nutrition_row_dict["1"]
-            nutrition_header = nutrition_row_dict["1"].split('/')[-1].strip()
+            # nutrition_header = nutrition_row_dict["1"].split('/')[-1].strip()
+            nutrition_header = str(sorted(nutrition_row_dict["1"].split("/"), key=len, reverse=True)[0]).strip()
             if nutrition_header and len(nutrition_row_dict) > 1:
                 if method == "manual":
                     nutri_probability = 1
@@ -150,7 +151,7 @@ class Pepsi_CEP_Template:
                     # print(nutrition_header,'------>',nutri_class)
                 nutrition_row_dict.pop('1', None)
                 if nutrition_row_dict:
-                    if nutri_class not in ['None', 'header', 'Nutrition information'] and nutri_probability > 0.80:
+                    if nutri_class not in ['None', 'header', 'Nutrition information'] and nutri_probability > 0.60:
                         for index, value in nutrition_row_dict.items():
                             header = 'PDV' if "%" in value else 'Value'
                             value = value.strip()
@@ -166,7 +167,7 @@ class Pepsi_CEP_Template:
                                     nutrition_dict[nutri_class].append({header: {'en': value}})
                                 else:
                                     nutrition_dict[nutri_class] = [{header: {'en': value}}]
-                    elif nutri_class not in ['header', 'Nutrition information'] and len(nutrition_header) > 5:
+                    elif nutri_class not in ['header', 'Nutrition information'] and len(nutrition_header) > 2:
                         # print("else statement ra")
                         nutrition_header = re.sub(r"(g|mg|kj|kcal|mcg|\/)*\b", "", nutrition_header.lower())
                         if nutrition_header.lower() not in ("vitamine") and not re.search(r"\d", nutrition_header):
@@ -191,57 +192,59 @@ class Pepsi_CEP_Template:
                                     nutrition_dict_exception[nutri_class] = [{header: {'en': value}}]
         # print(nutrition_dict)
 
-        if len(nutrition_dict) <= 3:
-            nutrition_dict.clear()
-        else:
-            nutrition_dict = {**nutrition_dict, **nutrition_dict_exception}
+        # if len(nutrition_dict) <= 3:
+        #     nutrition_dict.clear()
+        # else:
+        nutrition_dict = {**nutrition_dict, **nutrition_dict_exception}
         return nutrition_dict
 
     def pepsi_cep_main(self, dic):
         output_dic = {}
         nutrition_aws_mode = 0
         nutrition_manual_mode = 0
+        nutrition_availability = 0
         global nutri_table_available
         nutri_table_available = False
         if "modifyData" in dic:
             return dic["modifyData"]
         if "nutrition_data" in dic:
             if "tf_nutrition" in dic["nutrition_data"][0]:
-                nutrition_other_mode_check = 1
-                if isinstance(dic["nutrition_data"][0]['tf_nutrition'][0], str):
-                    nutrition_aws_mode = 1
-                try:
-                    key_variable = list(dic["nutrition_data"][0]['tf_nutrition'][0].keys())[0]
-
-                    # print("key_variable--------->", key_variable)
-                    if not key_variable.isnumeric():
-                        # print('manual format')
-                        nutrition_manual_mode = 1
-                        nutrition_aws_mode = 0
-                        xx = []
-                        for index, dictionary in enumerate(dic["nutrition_data"][0]['tf_nutrition']):
-                            d = {}
-                            for key, value in dictionary.items():
-                                d['1'] = key
-                                for ind, val in enumerate(value):
-                                    d[ind + 2] = val
-                            xx.append(d)
-                        # print(f'xxxx----->{xx}')
-                        nutrition_response = self.nutrition_data_processing(xx, method='manual')
-                    else:
-                        # print('semi-textract format')
-                        nutrition_response = self.nutrition_data_processing(dic["nutrition_data"][0]['tf_nutrition'])
+                nutrition_availability = 1
+                if dic["nutrition_data"][0]['tf_nutrition']:
+                    if isinstance(dic["nutrition_data"][0]['tf_nutrition'][0], str):
                         nutrition_aws_mode = 1
-                except:
-                    nutrition_response = {}
-                    # return {'status': '0','nutrition':nutrition_response}
-                if nutrition_response and 'Nutrition' not in output_dic:
-                    output_dic['Nutrition'] = nutrition_response
+                    try:
+                        key_variable = list(dic["nutrition_data"][0]['tf_nutrition'][0].keys())[0]
+
+                        # print("key_variable--------->", key_variable)
+                        if not key_variable.isnumeric():
+                            # print('manual format')
+                            nutrition_manual_mode = 1
+                            nutrition_aws_mode = 0
+                            xx = []
+                            for index, dictionary in enumerate(dic["nutrition_data"][0]['tf_nutrition']):
+                                d = {}
+                                for key, value in dictionary.items():
+                                    d['1'] = key
+                                    for ind, val in enumerate(value):
+                                        d[ind + 2] = val
+                                xx.append(d)
+                            # print(f'xxxx----->{xx}')
+                            nutrition_response = self.nutrition_data_processing(xx, method='manual')
+                        else:
+                            # print('semi-textract format')
+                            nutrition_response = self.nutrition_data_processing(dic["nutrition_data"][0]['tf_nutrition'])
+                            nutrition_aws_mode = 1
+                    except:
+                        nutrition_response = {}
+                        # return {'status': '0','nutrition':nutrition_response}
+                    if nutrition_response and 'Nutrition' not in output_dic:
+                        output_dic['Nutrition'] = nutrition_response
         dic.pop('nutrition_data', None)
         txt_list = self.dict_to_list(dic)
         output_dic = {**self.final_dict(txt_list,classifier), **output_dic}
         # print(output_dic)
-        if nutrition_aws_mode == 1 or not nutri_table_available:
+        if nutrition_aws_mode == 1 or not nutri_table_available or nutrition_availability:
             return {**{'status': '0'}, **{"modifyData": output_dic}}  # Status "0" goes to CEP for edit option else go to tornado for xml generation
         elif nutrition_manual_mode == 1:
             return output_dic
