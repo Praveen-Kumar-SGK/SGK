@@ -102,7 +102,19 @@ class Home_and_laundry_CEP_Template():
             else:
                 classified_output= "Unmapped"
     
-            value= self.bold_tag_close(txt)
+            if txt.startswith('b$1'):
+                txt = txt.split('b$1', 1)[1]
+
+            if 'b$1' in txt or "b$0" in txt:
+                temp = []
+                for items in txt.split("\r"):
+                    temp.append(self.bold_tag_close(items) + '\r')
+
+                x = "".join(temp)
+                value = self.bold_tag_close(x)
+            else:
+                # value = self.bold_tag_close(txt)
+                value = txt
             lang= self.language_detection(cleaned_txt, language)
             copy_elements.add(classified_output)
             languages.add(lang)
