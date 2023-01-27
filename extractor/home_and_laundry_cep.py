@@ -118,7 +118,7 @@ class Home_and_laundry_CEP_Template():
             lang= self.language_detection(cleaned_txt, language)
             copy_elements.add(classified_output)
             languages.add(lang)
-            if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1", "•", "b$0.b$1", "b$0َb$1"]:
+            if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1", "•", "b$0.b$1", "b$0َb$1"] and value.strip():
                 gen_cate_dic.setdefault(classified_output, []).append({lang:value})
         gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
         gen_cate_dic["languages"] = list(languages)
