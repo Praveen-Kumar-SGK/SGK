@@ -83,12 +83,17 @@ class Cocacola_CEP_Template:
 
     def final_dict(self, txt_list, classifier, probability=0.75, unwanted_txt_len=4, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
-        copy_elements_fixed = ["MANUFACTURING_SITE", "OTHER_INSTRUCTIONS", "MARKETING_CLAIM", "BEST_BEFORE_DATE",
-                               "INGREDIENTS_DECLARATION", "STORAGE_INSTRUCTIONS", "LOCATION_OF_ORIGIN",
-                               "CONTACT_INFORMATION", "WARNING_STATEMENTS", "WEBSITE", "VARIANT",
-                               "NET_CONTENT_STATEMENT",
-                               "USAGE_INSTRUCTIONS", "RECYCLE_STATEMENT", "DIET_EXCHANGES",
-                               "INTERNAL_PACKAGE_IDENTIFIER"]
+        copy_elements_fixed = ["address","OTHER_INSTRUCTIONS","MARKETING_CLAIM","expiration statement",
+                             "ingredients","storage instruction","Country of Origin",
+                             "warning statement","WEBSITE","VARIANT","net content",
+                             "usage instruction","RECYCLE_STATEMENT","DIET_EXCHANGES","INTERNAL_PACKAGE_IDENTIFIER"]
+
+        gs = {"MANUFACTURING_SITE": 'address', "BEST_BEFORE_DATE": 'expiration statement',
+        "INGREDIENTS_DECLARATION": 'ingredients',
+        "STORAGE_INSTRUCTIONS": 'storage instruction', "LOCATION_OF_ORIGIN": 'Country of Origin',
+        "WARNING_STATEMENTS": 'warning statement', "NET_CONTENT_STATEMENT": 'net content',
+        "USAGE_INSTRUCTIONS": 'usage instruction', "CONTACT_INFORMATION": 'address'}
+
         key_replace_list = ()
 
         gen_cate = {}
@@ -102,9 +107,9 @@ class Cocacola_CEP_Template:
                 classified_output = "INTERNAL_PACKAGE_IDENTIFIER"
             elif cleaned_txt[0].isdigit() and (cleaned_txt.endswith('ml') or cleaned_txt.endswith('l')) and len(
                     cleaned_txt) <= 6 and cleaned_txt[-3:] != 'cal':
-                classified_output = "NET_CONTENT_STATEMENT"
+                classified_output = "net content"
             elif (cleaned_txt.startswith('1800') or cleaned_txt.startswith('0800')) and len(cleaned_txt) <= 12:
-                classified_output = "CONTACT_INFORMATION"
+                classified_output = "address"
             else:
                 if len(cleaned_txt) > int(unwanted_txt_len):
                     classified_output = classifier.predict(laser.embed_sentences(cleaned_txt, lang='en'))
@@ -135,6 +140,8 @@ class Cocacola_CEP_Template:
                 value = txt
 
             lang = self.language_detection(cleaned_txt, language)
+            if classified_output in gs:
+                classified_output=gs[classified_output]
             copy_elements.add(classified_output)
             languages.add(lang)
             gen_cate.setdefault(classified_output, []).append({lang: value})
@@ -152,4 +159,3 @@ class Cocacola_CEP_Template:
         return {**{'status': '0'}, **{"modifyData": output_dic}}
 
 # ------------------------------------------------------------------------
-
