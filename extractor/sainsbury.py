@@ -18,7 +18,9 @@ import pdfplumber
 import itertools
 import tempfile
 from fuzzywuzzy import fuzz
-
+from pdfminer.layout import LAParams
+from pdfminer.high_level import extract_text_to_fp
+import io
 
 # filename_nutri = r"/Users/sakthivel/Documents/SGK/Nutrition Dataset/master_nutrition_sainsbury_model.sav"
 master_nutri_classifier = joblib.load(sainsbury_nutri_model_location)
