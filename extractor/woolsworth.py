@@ -409,7 +409,9 @@ def attribute(input_pdf,pages,text):
                 output = fuzz.ratio(text.lower(), "".join(text_list).replace('/n', '')) > 80
                 if output:
                     ind.append(index)
-        if 'bold' in str(results[ind[-1]]).lower():
+        if not ind:
+            return None
+        if ind and 'bold' in str(results[ind[-1]]).lower():
             for span in results[ind[-1]]:
                 if 'bold' in span['style'].lower():
                     new_text = span.text.split('\n')
@@ -444,7 +446,7 @@ def pdf_plumber_bold_text_dic(dictionary,pdf_file,page):
                                 bold_text = ('\n').join(temp_list)
 #                                 print(bold_txt)
                                 if bold_text:
-                                    bold_text = bold_text.replace('<b>','&lt;b&gt;').replace('</b>','&lt;/b&gt;').strip()
+                                    bold_text = bold_text.replace('<b>','&lt;b&gt;').replace('</b>','&lt;/b&gt;').replace('<', '&lt;').replace('>', '&gt;').strip()
     #                                 if any(k in bold_txt for k in cnt_keys):
     #                                     bold_txt = [bold_txt.replace(s,"") for s in cnt_keys if s in bold_txt][0]
     #                                 else:
