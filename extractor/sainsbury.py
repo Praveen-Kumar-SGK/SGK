@@ -311,31 +311,82 @@ def search_bold_content(text, content_list):
         #         print(score_dict[max(score_dict)])
         return score_dict[max(score_dict)]
 
+def attribute(input_pdf,pages,text):
+    text_out=[]
+    output_io = io.StringIO()
+    with open(input_pdf,'rb') as input:
+                        extract_text_to_fp(input, output_io,page_numbers= [int(pages)-1],
+                                           laparams=LAParams(line_margin=0.18, line_overlap=0.4, all_texts=False),
+                                           output_type='html', codec=None)
+
+    html = BeautifulSoup(output_io.getvalue(), 'html.parser')
+    results = html.find_all(
+        lambda tag: tag.name == "div" and fuzz.ratio(text.lower(),tag.text.lower().replace('/n',''))>66)
+    # print("attribute$$$$$$$$$",results)
+    if len(results) == 1:
+        if 'bold' in str(results[-1]).lower():
+            for span in results[-1]:
+                if 'bold' in span['style'].lower():
+                    new_text= span.text.split('\n')
+                    text_out.append(f'<b>{new_text[0]}</b>')
+                if 'bold' not in span['style'].lower():
+    #                 print('yes')
+                    new_text= span.text.split('\n')
+                    text_out.append(new_text[0])
+            # print(' '.join(text_out))
+            return ''.join(text_out)
+        else:
+            return None
+    elif len(results) > 1:
+        ind = []
+        for index in range(0, len(results)):
+            text_list = []
+            for span in results[index]:
+                text_list.append(span.text)
+            if text_list:
+                output = fuzz.ratio(text.lower(), "".join(text_list).replace('/n', '')) > 80
+                if output:
+                    ind.append(index)
+        if not ind:
+            return None
+        if ind and 'bold' in str(results[ind[-1]]).lower():
+            for span in results[ind[-1]]:
+                if 'bold' in span['style'].lower():
+                    new_text = span.text.split('\n')
+                    text_out.append(f'<b>{new_text[0]}</b>')
+                if 'bold' not in span['style'].lower():
+                    new_text = span.text.split('\n')
+                    text_out.append(new_text[0])
+            return ''.join(text_out)
+        else:
+            return None
+
 def bold_text_dic(dictionary,pdf_file,page,converted_docx):
     new_dict={}
     if dictionary:
         if any(k in list(dictionary.keys()) for k in ["INGREDIENTS_DECLARATION"]):
-            docx_file = pdf_to_docx(pdf_file,page,converted_docx)
-            cnt_list = pdf_to_content_list(docx_file)
+            # docx_file = pdf_to_docx(pdf_file,page,converted_docx)
+            # cnt_list = pdf_to_content_list(docx_file)
             for key,value in dictionary.items():
                 if key in ["INGREDIENTS_DECLARATION"]:
                     for dic in value:
                         for lang,txt in dic.items():
                             temp_list=[]
-#                             txt = txt.split('\n')
-#                             for text in txt:
-                            bold_txt = search_bold_content(txt,cnt_list)
+                            txt = txt.split('\n')
+                            for text in txt:
+#                             bold_txt = search_bold_content(txt,cnt_list)
+                                bold_txt = attribute(pdf_file,page,text)
 #                             print(bold_txt)
-                            if bold_txt:
-                                temp_list.append(bold_txt)
-                            else:
-                                temp_list.append(txt)
+                                if bold_txt:
+                                    temp_list.append(bold_txt)
+                                else:
+                                    temp_list.append(text)
 #                                 print(temp_list)
                             if temp_list:
-                                bold_txt = ('\n').join(temp_list)
+                                bold_txt = ('').join(temp_list)
 #                                 print(bold_txt)
                                 if bold_txt:
-                                    bold_txt = bold_txt.replace('<b>','&lt;b&gt;').replace('</b>','&lt;/b&gt;').strip()
+                                    bold_txt = bold_txt.replace('<b>','&lt;b&gt;').replace('</b>','&lt;/b&gt;').replace('<', '&lt;').replace('>', '&gt;').strip()
                                     if key in new_dict:
                                         new_dict[key].append({lang:bold_txt})
                                     else:
