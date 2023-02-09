@@ -201,3 +201,6 @@ pepsi_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/pepsico_cep.sav"
 
 ## Home_and_Laundry_cep_model_loc
 home_and_laundry_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/home_and_laundry_cep.sav"
+
+## jnj_listerine_cep_model_loc
+listerine_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/JnJ_Listerine_cep.sav"
