@@ -147,7 +147,7 @@ def general_dict_new(frn_nut_list):
         if frn_nut_list[i]:
             cnt = text_preprocessing(frn_nut_list[i][0])
             if cnt.replace("\n",'').lower() not in unwanted_items and cnt.strip():
-                if cnt.replace("\n", '').replace(".", ' ').lower() not in ["step", "time"]:
+                if cnt.replace("\n", '').lower() not in ["step", "time"]:
                     classified_output = classifier.predict(laser.embed_sentences(cnt, lang='en'))
                     probability1 = classifier.predict_proba(laser.embed_sentences(cnt, lang='en'))
                     probability1.sort()
@@ -219,7 +219,7 @@ def pdf_extract_table(pdf_file,page_no):
     with pdfplumber.open(pdf_file) as pdf:
         if int(page_no) <= len(pdf.pages):
             page = pdf.pages[page_no-1]
-            tables = page.extract_tables({"edge_min_length": 20})
+            tables = page.extract_tables()
             return tables
         else:
             return {}
