@@ -204,3 +204,6 @@ home_and_laundry_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/home_
 
 ## jnj_listerine_cep_model_loc
 listerine_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/JnJ_Listerine_cep.sav"
+
+## mondelez_cep_model_loc
+mondelez_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/mondelez_cep.sav"

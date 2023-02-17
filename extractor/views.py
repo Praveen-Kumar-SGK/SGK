@@ -78,7 +78,7 @@ from .cocacola_cep import Cocacola_CEP_Template
 from .pepsi_cep import Pepsi_CEP_Template
 from .home_and_laundry_cep import Home_and_laundry_CEP_Template
 from .jnj_listerine_cep import Listerine_CEP_Template
-
+from .mondelez_cep import Mondelez_CEP_Template
 
 import smbclient
 from environment import MODE
@@ -573,6 +573,21 @@ def jnj_listerine_cep_view(request):
         return JsonResponse({})
     else:
         logger(account_type="CEP", input_body={"account":"jnj_listerine", "file": str(body)}, output=str(result)).save()
+    return JsonResponse(result)
+
+@csrf_exempt
+def mondelez_cep_view(request):
+    json_response = request.body.decode('utf-8')
+    body = json.loads(json_response)
+    print(body)
+    try:
+        result = Mondelez_CEP_Template().mondelez_cep_main(body)
+    except Exception as E:
+        logger(account_type="CEP", input_body={"account": "mondelez", "file": str(body)},
+            output=str(E),error=str(E)).save()
+        return JsonResponse({})
+    else:
+        logger(account_type="CEP", input_body={"account":"mondelez", "file": str(body)}, output=str(result)).save()
     return JsonResponse(result)
 
 @csrf_exempt
