@@ -3,6 +3,7 @@ import joblib
 from langid import classify
 from .excel_processing import *
 from dataclasses import dataclass, field
+from dateutil.parser import parse
 
 # ----------------------------------------------------------------------------------------
 # Loading model
@@ -61,6 +62,13 @@ class Listerine_CEP_Template:
         elif "i$1" in value and "i$0" not in value:
             value = "".join(("i$0", value))
         return value
+    
+    def is_date(self, string, fuzzy=False):
+        try: 
+            parse(string, fuzzy=fuzzy)
+            return True
+        except ValueError:
+            return False
 
     def final_dict(self, txt_list, classifier, probability=0.80, unwanted_txt_len=3, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
@@ -75,10 +83,17 @@ class Listerine_CEP_Template:
         for txt in txt_list:
             cleaned_txt = self.text_preprocessing(txt, key_replace_list)
             if len(cleaned_txt) > 0:
+                num_of_alphabets = sum(1 for char in cleaned_txt if char.isalpha())
+                num_of_numbers = sum(1 for char in cleaned_txt if char.isdigit())
+                
                 if cleaned_txt[0].isdigit() and cleaned_txt.endswith('ml') and len(cleaned_txt) <= 6:
                     classified_output = "net content"
                 elif cleaned_txt[0].isdigit() and cleaned_txt.endswith('mm') and len(cleaned_txt) <= 8:
                     classified_output = "DESIGN_INSTRUCTIONS"
+                elif len(cleaned_txt)<13 and self.is_date(cleaned_txt)==True:
+                    classified_output="Unmapped"
+                elif (num_of_alphabets <5) or (num_of_numbers >= num_of_alphabets):
+                    classified_output="Unmapped"
                 else:
                     if len(cleaned_txt) > int(unwanted_txt_len):
                         classified_output = classifier.predict(laser.embed_sentences(cleaned_txt, lang='en'))
