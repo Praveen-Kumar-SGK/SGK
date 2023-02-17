@@ -67,7 +67,7 @@ class Mondelez_CEP_Template():
     def final_dict(self, txt_list, classifier, probability=0.75, unwanted_txt_len=4, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
         copy_elements_fixed = ["Country of Origin", "usage instruction", "address", "shelf_life_statement",
-                               'NET_CONTENT_STATEMENT'
+                               "NET_CONTENT_STATEMENT",
                                "storage instruction", "allergen statement", "ingredients", "ingredients claim",
                                "warning statement",
                                "COPYRIGHT_TRADEMARK_STATEMENT", "MARKETING_CLAIM", "OTHER_INSTRUCTIONS",
