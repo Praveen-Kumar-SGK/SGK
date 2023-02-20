@@ -5,7 +5,8 @@ import joblib
 from langid import classify
 from .excel_processing import *
 from dataclasses import dataclass, field
-
+from sklearn.metrics.pairwise import cosine_similarity
+from bidi.algorithm import get_display
 # ---------------------------------------------------------------------------------------------------------------------
 # Loading model
 classifier = joblib.load(mondelez_cep_model_loc)
@@ -107,7 +108,7 @@ class Mondelez_CEP_Template():
                 word_count = [i.strip() for i in cleaned_txt.split(' ')]
                 num_of_alphabets = sum(1 for char in cleaned_txt if char.isalpha())
                 num_of_numbers = sum(1 for char in cleaned_txt if char.isdigit())
-                matches = matches = ['kj', 'толе', 'tel', 'кдж']
+                matches  = ['kj', 'толе', 'tel', 'кдж']
 
                 # Condition to filter nutrition names in multiple languages #
                 if sum(1 for c in cleaned_txt if c == '/') >= 4 or sum(1 for c in cleaned_txt if c == ';') >= 4:
