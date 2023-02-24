@@ -72,8 +72,9 @@ class Listerine_CEP_Template:
 
     def final_dict(self, txt_list, classifier, probability=0.80, unwanted_txt_len=3, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
-        copy_elements_fixed = ["address", "OTHER_INSTRUCTIONS", "MARKETING_CLAIM", "ingredients", "DESIGN_INSTRUCTIONS",
-                               "Country of Origin", "net content", "usage instruction", "RECYCLE_STATEMENT"]
+        copy_elements_fixed = ["address", "Country of Origin", "DESIGN_INSTRUCTIONS", "ingredients", "LOT_NUMBER",
+                                "MARKETING_CLAIM", "net content", "OPENING_INSTRUCTIONS", "OTHER_INSTRUCTIONS", 
+                                "RECYCLE_STATEMENT", "usage instruction",  "warning statement" ]
 
         key_replace_list = ()
 
