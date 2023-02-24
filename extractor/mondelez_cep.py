@@ -82,6 +82,11 @@ class Mondelez_CEP_Template():
             value = "".join((value, "i$1"))
         elif "i$1" in value and "i$0" not in value:
             value = "".join(("i$0", value))
+        # Texting having multiple bold tags
+        if len(re.findall(r"b\$0", value)) > len(re.findall(r'b\$1', value)):
+            value = value + 'b$1'
+        elif len(re.findall(r"b\$0", value)) < len(re.findall(r'b\$1', value)):
+            value = 'b$0' + value
         return value
     # -----------------------------------------------------------------------------------------------------------------
     def final_dict(self, txt_list, classifier, probability=0.75, unwanted_txt_len=4, below_thres_class="Unmapped",
@@ -142,17 +147,6 @@ class Mondelez_CEP_Template():
             else:
                 classified_output = "Unmapped"
 
-            if txt.startswith('b$1'):
-                txt = txt.split('b$1', 1)[1]
-            if 'b$1' in txt or "b$0" in txt:
-                temp = []
-                for items in txt.split("\r"):
-                    temp.append(self.bold_tag_close(items) + '\r')
-
-                x = "".join(temp)
-                value = self.bold_tag_close(x)
-            else:
-                value = self.bold_tag_close(txt)
             value = self.bold_tag_close(txt)
             lang = self.language_detection(cleaned_txt, language)
             copy_elements.add(classified_output)
