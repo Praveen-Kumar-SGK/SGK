@@ -88,6 +88,21 @@ class Mondelez_CEP_Template():
         elif len(re.findall(r"b\$0", value)) < len(re.findall(r'b\$1', value)):
             value = 'b$0' + value
         return value
+        # ---------------------------------------------------------------------------------------------------------------------
+    def bold_sequence(self, text):
+        tags = re.findall(r"b\$[01]", text, flags=re.M)
+        temp_tags = tags.copy()
+        index_to_ignore = []
+        for index, tag in enumerate(temp_tags):
+            if index not in index_to_ignore:
+                if tag == "b$1" and index == 0:
+                    text = "".join(["b$0", text])
+                elif tag == "b$0" and index == range(len(tags))[-1]:
+                    text = "".join([text, "b$1"])
+                elif tag == "b$0" and temp_tags[index + 1] == "b$1":
+                    index_to_ignore.append(index + 1)
+        return text
+
     # -----------------------------------------------------------------------------------------------------------------
     def final_dict(self, txt_list, classifier, probability=0.75, unwanted_txt_len=4, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
@@ -148,6 +163,7 @@ class Mondelez_CEP_Template():
                 classified_output = "Unmapped"
 
             value = self.bold_tag_close(txt)
+            value = self.bold_sequence(value)
             lang = self.language_detection(cleaned_txt, language)
             copy_elements.add(classified_output)
             languages.add(lang)
