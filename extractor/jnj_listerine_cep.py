@@ -72,9 +72,10 @@ class Listerine_CEP_Template:
 
     def final_dict(self, txt_list, classifier, probability=0.80, unwanted_txt_len=3, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
-        copy_elements_fixed = ["address", "Country of Origin", "DESIGN_INSTRUCTIONS", "ingredients", "LOT_NUMBER",
-                                "MARKETING_CLAIM", "net content", "OPENING_INSTRUCTIONS", "OTHER_INSTRUCTIONS", 
-                                "RECYCLE_STATEMENT", "usage instruction",  "warning statement" ]
+        copy_elements_fixed = ["ADDRESS", "COUNTRY OF ORIGIN", "DESIGN_INSTRUCTIONS", "INGREDIENTS",
+                               "LOT_NUMBER", "MARKETING_CLAIM", "NET CONTENT", "OPENING_INSTRUCTIONS",
+                               "OTHER_INSTRUCTIONS", "RECYCLE_STATEMENT", "USAGE INSTRUCTION",
+                               "WARNING STATEMENT"]
 
         key_replace_list = ()
 
@@ -128,7 +129,7 @@ class Listerine_CEP_Template:
             copy_elements.add(classified_output)
             languages.add(lang)
             if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1", "•", "b$0.b$1", "b$0َb$1"] and value.strip():
-                gen_cate_dic.setdefault(classified_output, []).append({lang: value})
+                gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
         # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
         gen_cate_dic["copyElements"] = copy_elements_fixed
         gen_cate_dic["languages"] = list(languages)
