@@ -129,7 +129,8 @@ class Listerine_CEP_Template:
             languages.add(lang)
             if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1", "•", "b$0.b$1", "b$0َb$1"] and value.strip():
                 gen_cate_dic.setdefault(classified_output, []).append({lang: value})
-        gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
+        # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
+        gen_cate_dic["copyElements"] = copy_elements_fixed
         gen_cate_dic["languages"] = list(languages)
         return gen_cate_dic
 
