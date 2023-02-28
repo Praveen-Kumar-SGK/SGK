@@ -106,12 +106,12 @@ class Mondelez_CEP_Template():
     # -----------------------------------------------------------------------------------------------------------------
     def final_dict(self, txt_list, classifier, probability=0.75, unwanted_txt_len=4, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
-        copy_elements_fixed = ["Country of Origin", "usage instruction", "address", "shelf_life_statement",
-                               "NET_CONTENT_STATEMENT",
-                               "storage instruction", "allergen statement", "ingredients", "ingredients claim",
-                               "warning statement",
-                               "COPYRIGHT_TRADEMARK_STATEMENT", "MARKETING_CLAIM", "OTHER_INSTRUCTIONS",
-                               "CONTACT_INFORMATION", "DISCLAIMER", "WEBSITE", "DESIGN_INSTRUCTIONS"]
+        copy_elements_fixed = ["COUNTRY OF ORIGIN", "USAGE INSTRUCTION", "ADDRESS",
+                               "SHELF_LIFE_STATEMENT", "NET_CONTENT_STATEMENT", "STORAGE INSTRUCTION",
+                               "ALLERGEN STATEMENT", "INGREDIENTS", "INGREDIENTS CLAIM",
+                               "WARNING STATEMENT", "COPYRIGHT_TRADEMARK_STATEMENT", "MARKETING_CLAIM",
+                               "OTHER_INSTRUCTIONS", "CONTACT_INFORMATION", "DISCLAIMER", "WEBSITE",
+                               "DESIGN_INSTRUCTIONS"]
         gen_cate_dic = {}
         languages = set()
         copy_elements = set()
@@ -168,7 +168,7 @@ class Mondelez_CEP_Template():
             copy_elements.add(classified_output)
             languages.add(lang)
             if value.strip():
-                gen_cate_dic.setdefault(classified_output, []).append({lang: value})
+                gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
         # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
         gen_cate_dic["copyElements"] = copy_elements_fixed
         gen_cate_dic["languages"] = list(languages)
