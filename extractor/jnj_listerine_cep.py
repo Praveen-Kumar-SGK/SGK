@@ -15,7 +15,7 @@ classifier = joblib.load(listerine_cep_model_loc)
 
 @dataclass
 class Listerine_CEP_Template:
-    splt_parameter: str = r"\.\r|\.\t| - |\. \r|. _ |.  "
+    splt_parameter: str = r"\.[\r\n]|\.\t| - |\. [\r\n]|. _ |.  "
 
     def text_preprocessing(self, text, replace_tup=()):
         text = str(text)
