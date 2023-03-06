@@ -51,8 +51,23 @@ class Listerine_CEP_Template:
             lang = classify(value)[0]
         return lang
 
+    def bold_sequence(self, text):
+        tags = re.findall(r"b\$[01]", text, flags=re.M)
+        temp_tags = tags.copy()
+        index_to_ignore = []
+        for index, tag in enumerate(temp_tags):
+            if index not in index_to_ignore:
+                if tag == "b$1" and index == 0:
+                    text = "".join(["b$0", text])
+                elif tag == "b$0" and index == range(len(tags))[-1]:
+                    text = "".join([text, "b$1"])
+                elif tag == "b$0" and temp_tags[index + 1] == "b$1":
+                    index_to_ignore.append(index + 1)
+        return text
+
     def bold_tag_close(self, value):
         value = value.strip()
+        value = self.bold_sequence(value)
         if "b$0" in value and "b$1" not in value:
             value = "".join((value, "b$1"))
         elif "b$1" in value and "b$0" not in value:
