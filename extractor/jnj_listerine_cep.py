@@ -66,7 +66,7 @@ class Listerine_CEP_Template:
         return text
 
     def bold_tag_close(self, value):
-        value = value.strip()
+        value = value
         value = self.bold_sequence(value)
         if "b$0" in value and "b$1" not in value:
             value = "".join((value, "b$1"))
@@ -130,15 +130,15 @@ class Listerine_CEP_Template:
             if txt.startswith('b$1'):
                 txt = txt.split('b$1', 1)[1]
 
-            if 'b$1' in txt or "b$0" in txt:
-                temp = []
-                for items in txt.split("\r"):
-                    temp.append(self.bold_tag_close(items) + '\r')
-
-                x = "".join(temp)
-                value = self.bold_tag_close(x)
-            else:
-                value = self.bold_tag_close(txt)
+            # if 'b$1' in txt or "b$0" in txt:
+            #     temp = []
+            #     for items in txt.split("\r"):
+            #         temp.append(self.bold_tag_close(items) + '\r')
+            #
+            #     x = "".join(temp)
+            #     value = self.bold_tag_close(x)
+            # else:
+            value = self.bold_tag_close(txt)
 
             lang = self.language_detection(cleaned_txt, language)
             copy_elements.add(classified_output)
