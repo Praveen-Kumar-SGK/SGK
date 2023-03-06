@@ -82,19 +82,19 @@ class Cocacola_CEP_Template:
     def ingredient_contact_split(self, gen_cate):
         contct = []
         for key, val in gen_cate.items():
-            if "INGREDIENTS_DECLARATION" in key:
+            if "INGREDIENTS" in key:
                 for ind, dic in enumerate(val):
                     ingrt = list(dic.items())[0][1].lower()
                     ingrt = ingrt.split('\r', 1)
                     if 'consumer information' in ingrt[0]:
                         contct.append({'en': ingrt[0]})
-                        gen_cate["INGREDIENTS_DECLARATION"][ind] = {'en': ingrt[1]}
+                        gen_cate["INGREDIENTS"][ind] = {'en': ingrt[1]}
                     else:
                         gen_cate = gen_cate
         try:
-            gen_cate["CONTACT_INFORMATION"].extend(contct)
+            gen_cate["ADDRESS"].extend(contct)
         except:
-            gen_cate["CONTACT_INFORMATION"] = contct
+            gen_cate["ADDRESS"] = contct
         return gen_cate
 
     def final_dict(self, txt_list, classifier, probability=0.75, unwanted_txt_len=4, below_thres_class="Unmapped",
@@ -176,7 +176,7 @@ class Cocacola_CEP_Template:
                     gen_cate_dic.setdefault(classified_output, []).append({lang: value})
                 else:
                     gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
-            gen_cate_dic = self.ingredient_contact_split(gen_cate)
+            gen_cate_dic = self.ingredient_contact_split(gen_cate_dic)
             gen_cate_dic = {key: val for key, val in gen_cate_dic.items() if val}
         # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
         gen_cate_dic["copyElements"] = copy_elements_fixed
