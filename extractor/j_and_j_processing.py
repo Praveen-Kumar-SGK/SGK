@@ -75,10 +75,10 @@ def text_preprocessing(text):
     return text.strip()
 
 def final_dict(txt_list):
-    copy_elements_fixed = ["Country of Origin", "usage instruction", "address", "shelf_life_statement",
-                           "storage instruction", "allergen statement", "ingredients", "warning statement",
-                           "COPYRIGHT_TRADEMARK_STATEMENT","MARKETING_CLAIM", "OTHER_INSTRUCTIONS",
-                           "DESIGN_INSTRUCTIONS","NET_CONTENT_STATEMENT"]
+    copy_elements_fixed = ["COUNTRY OF ORIGIN", "USAGE INSTRUCTION", "ADDRESS", "SHELF_LIFE_STATEMENT",
+                           "STORAGE INSTRUCTION", "ALLERGEN STATEMENT", "INGREDIENTS", "WARNING STATEMENT",
+                           "COPYRIGHT_TRADEMARK_STATEMENT", "MARKETING_CLAIM", "OTHER_INSTRUCTIONS",
+                           "DESIGN_INSTRUCTIONS", "NET_CONTENT_STATEMENT"]
     gen_cate_dic={}
     languages = set()
     copy_elements = set()
@@ -115,12 +115,13 @@ def final_dict(txt_list):
         lang = classify(cleaned_txt)[0]
         copy_elements.add(classified_output)
         languages.add(lang)
-        if value not in ["b$0b$1","b$0/ b$1",""]:
-            if classified_output in gen_cate_dic:
-                gen_cate_dic[classified_output].append({lang:value})
+        if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1", "•", "b$0.b$1", "b$0َb$1"] and value.strip():
+            if classified_output == "Unmapped":
+                gen_cate_dic.setdefault(classified_output, []).append({lang: value})
             else:
-                gen_cate_dic[classified_output] = [{lang:value}]
-    gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
+                gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
+    # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
+    gen_cate_dic["copyElements"] = copy_elements_fixed
     gen_cate_dic["languages"] = list(languages)
     return gen_cate_dic
 
