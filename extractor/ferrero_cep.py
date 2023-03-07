@@ -16,7 +16,8 @@ def dict_to_list(dictionary):
     for key, value in dictionary.items():
         for data_dict in value:
             for text_frame_no, txt in data_dict.items():
-                item = re.sub(r"\s{3,}|\.\r", lambda pat: pat.group()+"**", txt, flags=re.M)  ## For applying into multi line content
+                # item = re.sub(r"\s{3,}|\.\r", lambda pat: pat.group()+"**", txt, flags=re.M)  ## For applying into multi line content
+                item = re.sub(r"\s{3,}|\.[\r\n]", lambda pat: pat.group()+"**", txt, flags=re.M)  ## For applying into multi line content
                 item = str(item).split("**")
                 for k in item:
                     if k.strip():
@@ -37,10 +38,10 @@ def text_preprocessing(text):
     return text.strip()
 
 def final_dict(txt_list):
-    copy_elements_fixed = ["Country of Origin", "usage instruction", "address", "shelf_life_statement",
-                           "storage instruction", "allergen statement", "ingredients", "warning statement",
-                           "COPYRIGHT_TRADEMARK_STATEMENT","MARKETING_CLAIM", "OTHER_INSTRUCTIONS",
-                           "MARKETING_COPY","FUNCTIONAL_NAME"]
+    copy_elements_fixed = ["COUNTRY OF ORIGIN", "USAGE INSTRUCTION", "ADDRESS", "SHELF_LIFE_STATEMENT",
+                           "STORAGE INSTRUCTION", "ALLERGEN STATEMENT", "INGREDIENTS", "WARNING STATEMENT",
+                           "COPYRIGHT_TRADEMARK_STATEMENT", "MARKETING_CLAIM", "OTHER_INSTRUCTIONS",
+                           "MARKETING_COPY", "FUNCTIONAL_NAME"]
     gen_cate_dic={}
     classified_output = None
     languages = set()
@@ -76,12 +77,14 @@ def final_dict(txt_list):
         lang = classify(cleaned_txt)[0]
         copy_elements.add(classified_output)
         languages.add(lang)
-        if classified_output in gen_cate_dic:
-            gen_cate_dic[classified_output].append({lang:value})
-        else:
-            gen_cate_dic[classified_output] = [{lang:value}]
+        if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1", "•", "b$0.b$1", "b$0َb$1"] and value.strip():
+            if classified_output == "Unmapped":
+                gen_cate_dic.setdefault(classified_output, []).append({lang: value})
+            else:
+                gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
     gen_cate_dic,languages,copy_elements = ingre_split_dict(gen_cate_dic,languages,copy_elements)
-    gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
+    # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
+    gen_cate_dic["copyElements"] = copy_elements_fixed
     gen_cate_dic["languages"] = list(languages)
     return gen_cate_dic
 
@@ -150,7 +153,7 @@ def nutrition_data_processing(input_list,method=None):
 def ingre_split_dict(dic,languages,copy_elements):
     final_dic = {}
     for key, value in dic.items():
-        if key in ["ingredients","OTHER_INSTRUCTIONS"]:
+        if key in ["INGREDIENTS","OTHER_INSTRUCTIONS"]:
             for cnt in value:
                 for lang, txt in cnt.items():
                     # if key in ["ingredients", "OTHER_INSTRUCTIONS"]:
@@ -177,9 +180,9 @@ def ingre_split_dict(dic,languages,copy_elements):
                         copy_elements.add(classified_output)
                         languages.add(lang)
                         if classified_output in final_dic:
-                            final_dic[classified_output].append({lang: final_text.strip()})
+                            final_dic[classified_output.upper()].append({lang: final_text.strip()})
                         else:
-                            final_dic[classified_output] = [{lang: final_text.strip()}]
+                            final_dic[classified_output.upper()] = [{lang: final_text.strip()}]
         else:
             for cnt in value:
                 if key in final_dic:
