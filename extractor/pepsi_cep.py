@@ -86,7 +86,7 @@ class Pepsi_CEP_Template:
         return text
 
     def bold_tag_close(self, value):
-        value = value.strip()
+        value = value
         value = self.bold_sequence(value)
         if "b$0" in value and "b$1" not in value:
             value = "".join((value, "b$1"))
