@@ -39,7 +39,7 @@ class Listerine_CEP_Template:
                     item = str(item).split("*#")
                     for k in item:
                         if k.strip():
-                            final_list.append(k.strip())
+                            final_list.append(k)
         return final_list
 
     def language_detection(self, value, language=None):  # lang Module need to update
