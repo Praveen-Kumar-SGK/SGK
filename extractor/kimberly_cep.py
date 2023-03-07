@@ -8,7 +8,8 @@ classifier = joblib.load(kimberly_cep_model_loc)
 
 @dataclass
 class CEP_Template:
-    splt_parameter: str = r"\.\r|\. \r|\.  |  \r|•|\. |b\$1"
+    # splt_parameter: str = r"\.\r|\. \r|\.  |  \r|•|\. |b\$1"
+    splt_parameter: str = r"\.[\r\n]|\. [\r\n]|\.  |  [\r\n]|•|\. |b\$1"
 
     def text_preprocessing(self, text, replace_tup=()):
         text = str(text)
@@ -44,8 +45,23 @@ class CEP_Template:
         lang = classify(value)[0]
         return lang
 
+    def bold_sequence(self, text):
+        tags = re.findall(r"b\$[01]", text, flags=re.M)
+        temp_tags = tags.copy()
+        index_to_ignore = []
+        for index, tag in enumerate(temp_tags):
+            if index not in index_to_ignore:
+                if tag == "b$1" and index == 0:
+                    text = "".join(["b$0", text])
+                elif tag == "b$0" and index == range(len(tags))[-1]:
+                    text = "".join([text, "b$1"])
+                elif tag == "b$0" and temp_tags[index + 1] == "b$1":
+                    index_to_ignore.append(index + 1)
+        return text
+
     def bold_tag_close(self, value):
-        value = value.strip()
+        value = value
+        value = self.bold_sequence(value)
         if "b$0" in value and "b$1" not in value:
             value = "".join((value, "b$1"))
         elif "b$1" in value and "b$0" not in value:
@@ -60,11 +76,11 @@ class CEP_Template:
     def final_dict(self, txt_list, classifier, probability=0.75, unwanted_txt_len=10, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
 
-        copy_elements_fixed = ["Country of Origin", "usage instruction", "address", "shelf_life_statement",
-                               "storage instruction", "allergen statement", "ingredients", "warning statement",
+        copy_elements_fixed = ["COUNTRY OF ORIGIN", "USAGE INSTRUCTION", "ADDRESS", "SHELF_LIFE_STATEMENT",
+                               "STORAGE INSTRUCTION", "ALLERGEN STATEMENT", "INGREDIENTS", "WARNING STATEMENT",
                                "COPYRIGHT_TRADEMARK_STATEMENT", "MARKETING_CLAIM", "OTHER_INSTRUCTIONS",
                                "MARKETING_COPY", "FUNCTIONAL_NAME", "CONTACT_INFORMATION", "DISCLAIMER",
-                               "WEBSITE", "DESIGN_INSTRUCTIONS", "RECYCLE_STATEMENT","MANUFACTURER_STATEMENT"]
+                               "WEBSITE", "DESIGN_INSTRUCTIONS", "RECYCLE_STATEMENT", "MANUFACTURER_STATEMENT"]
 
         gen_cate_dic = {}
         languages = set()
@@ -99,9 +115,13 @@ class CEP_Template:
             lang = self.language_detection(cleaned_txt, language)
             copy_elements.add(classified_output)
             languages.add(lang)
-            if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1","•","b$0.b$1","b$0َb$1"]:
-                gen_cate_dic.setdefault(classified_output, []).append({lang: value})
-        gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
+            if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1","•","b$0.b$1","b$0َb$1"] and value.strip():
+                if classified_output == "Unmapped":
+                    gen_cate_dic.setdefault(classified_output, []).append({lang: value})
+                else:
+                    gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
+        # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
+        gen_cate_dic["copyElements"] = copy_elements_fixed
         gen_cate_dic["languages"] = list(languages)
         return gen_cate_dic
 
