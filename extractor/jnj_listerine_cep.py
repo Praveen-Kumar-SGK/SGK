@@ -17,13 +17,14 @@ classifier = joblib.load(listerine_cep_model_loc)
 class Listerine_CEP_Template:
     splt_parameter: str = r"\.[\r\n]|\.\t| - |\. [\r\n]|. _ |.  "
 
-    def text_preprocessing(self, text, replace_tup=()):
+    def text_preprocessing(self, text, replace_tup=("-","&","*")):
         text = str(text)
         for txt in replace_tup:
-            text = text.replace(txt, "")
+            text = re.sub(r"{}".format(txt)," ",text)
 
         text = text.lower()
-        text = text.replace('\r', ' ').replace("\t", "")
+        # text = text.replace('\r', ' ').replace("\t", "")
+        text = re.sub(r"\\r|\\t", " ", text)
         text = re.sub(r"\w\$\d", "", text)
         text = text.replace('(', '').replace(')', '')
         text = re.sub(r"\[.*\]", "", text)
@@ -77,9 +78,9 @@ class Listerine_CEP_Template:
         elif "i$1" in value and "i$0" not in value:
             value = "".join(("i$0", value))
         return value
-    
+
     def is_date(self, string, fuzzy=False):
-        try: 
+        try:
             parse(string, fuzzy=fuzzy)
             return True
         except ValueError:
@@ -102,26 +103,26 @@ class Listerine_CEP_Template:
             if len(cleaned_txt) > 0:
                 num_of_alphabets = sum(1 for char in cleaned_txt if char.isalpha())
                 num_of_numbers = sum(1 for char in cleaned_txt if char.isdigit())
-                
+
                 if cleaned_txt[0].isdigit() and cleaned_txt.endswith('ml') and len(cleaned_txt) <= 6:
                     classified_output = "net content"
                 elif cleaned_txt[0].isdigit() and cleaned_txt.endswith('mm') and len(cleaned_txt) <= 8:
                     classified_output = "DESIGN_INSTRUCTIONS"
-                elif len(cleaned_txt)<13 and self.is_date(cleaned_txt)==True:
-                    classified_output="Unmapped"
-                elif (num_of_alphabets <5) or (num_of_numbers >= num_of_alphabets):
-                    classified_output="Unmapped"
+                elif len(cleaned_txt) < 13 and self.is_date(cleaned_txt) == True:
+                    classified_output = "Unmapped"
+                elif (num_of_alphabets < 5) or (num_of_numbers >= num_of_alphabets):
+                    classified_output = "Unmapped"
                 else:
                     if len(cleaned_txt) > int(unwanted_txt_len):
-                        classified_output = classifier.predict(laser.embed_sentences(cleaned_txt, lang='en'))
-                        probability1 = classifier.predict_proba(laser.embed_sentences(cleaned_txt, lang='en'))[0]
+                        classified_output = classifier.predict(laser.embed_sentences(cleaned_txt, lang='en'))[0]
+                        probability1 = classifier.predict_proba(laser.embed_sentences(cleaned_txt, lang='en'))
                         probability1.sort()
-                        proba = probability1[-1]
+                        proba = max(probability1[0])
+                        # print("text****", txt, "probali****", proba, "output******", classified_output)
                         if proba > probability:
-                            classified_output = classified_output[0]
-                        elif proba > 0.60 and proba <= probability:
+                            classified_output = classified_output
+                        elif proba > 0.60 and proba <= probability and classified_output not in ("DESIGN_INSTRUCTIONS"):
                             classified_output = "OTHER_INSTRUCTIONS"
-                            # print("text****",cleaned_txt,"probali****",proba,"output******",classified_output)
                         else:
                             classified_output = below_thres_class
                     else:
@@ -143,7 +144,14 @@ class Listerine_CEP_Template:
             lang = self.language_detection(cleaned_txt, language)
             copy_elements.add(classified_output)
             languages.add(lang)
+
             if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1", "•", "b$0.b$1", "b$0َb$1"] and value.strip():
+                seed_numbers = re.findall(r"^\[PR\-\d*?\]\s\-\s?|\[PR\-\d*?\]\s\-\s?$", txt, flags=re.M | re.I)
+                # print("seed numbers------>",seed_numbers)
+                if seed_numbers:
+                    for seed_number in seed_numbers:
+                        value = value.strip(seed_number)
+                        gen_cate_dic.setdefault("SEED_NUMBER", []).append({"en": seed_number})
                 if classified_output == "Unmapped":
                     gen_cate_dic.setdefault(classified_output, []).append({lang: value})
                 else:
