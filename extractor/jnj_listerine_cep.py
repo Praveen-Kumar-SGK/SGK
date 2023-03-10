@@ -15,7 +15,8 @@ classifier = joblib.load(listerine_cep_model_loc)
 
 @dataclass
 class Listerine_CEP_Template:
-    splt_parameter: str = r"\.[\r\n]|\.\t| - |\. [\r\n]|. _ |.  "
+    # splt_parameter: str = r"\.[\r\n]|\.\t| - |\. [\r\n]|. _ |.  "
+    splt_parameter: str = r"\n|\.[\r\n]|\.\t| - |\. [\r\n]|. _ |.  "
 
     def text_preprocessing(self, text, replace_tup=("-","&","*")):
         text = str(text)
@@ -146,13 +147,23 @@ class Listerine_CEP_Template:
             languages.add(lang)
 
             if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1", "•", "b$0.b$1", "b$0َb$1"] and value.strip():
+                # print(classified_output,"---------->",value)
                 seed_numbers = re.findall(r"^\[PR\-\d*?\]\s\-\s?|\[PR\-\d*?\]\s\-\s?$", txt, flags=re.M | re.I)
+                # seed_numbers = re.findall(r"\[PR\-\d*?\]\s\-\s?", txt, flags=re.M | re.I)
                 # print("seed numbers------>",seed_numbers)
-                if seed_numbers:
+                if seed_numbers and classified_output != "Unmapped":
                     for seed_number in seed_numbers:
-                        value = value.strip(seed_number)
                         gen_cate_dic.setdefault("SEED_NUMBER", []).append({"en": seed_number})
+                        value = value.strip(seed_number)
+                        if not value.strip():
+                            continue
+                elif re.findall(r"\[PR\-\d*?\]\s\-\s?", txt, flags=re.M | re.I) and classified_output == "Unmapped":
+                    gen_cate_dic.setdefault("SEED_NUMBER", []).append({"en": value})
+                    continue
+
                 if classified_output == "Unmapped":
+                    # print("txt---------->", txt)
+                    # print(classified_output, "---------->", len(value))
                     gen_cate_dic.setdefault(classified_output, []).append({lang: value})
                 else:
                     gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
