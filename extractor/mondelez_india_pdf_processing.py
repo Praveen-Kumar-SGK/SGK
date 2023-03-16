@@ -1,5 +1,3 @@
-import re
-
 import pandas as pd
 import pdfplumber
 # from pdf2image import convert_from_path
@@ -14,9 +12,6 @@ import mammoth
 from bs4 import BeautifulSoup
 from fuzzywuzzy import fuzz , process
 from termcolor import colored
-# from camelot import utils
-from .mondelez_plr_pdf_processing import mondelez_main_plr
-from .mondelez_india_pdf_processing import mondelez_india_pdf
 
 from environment import MODE
 
@@ -26,7 +21,6 @@ else:
     from .dev_constants import *
 
 from .excel_processing import *
-
 
 def content_to_chinese_nutrition_table(df):
     is_nutrition_table = False
@@ -44,7 +38,7 @@ def content_to_chinese_nutrition_table(df):
             table.append(table_content)
     return pd.DataFrame(table)
 
-class mondelez_pdf(object):
+class mondelez_india_pdf(object):
     def __init__(self):
         self.input_pdf = None
         self.table_check = ['INFORMASI NILAI GIZI','nutrition information','nutrition information typical values','nutrition declaration']    #indonesian and english
@@ -59,118 +53,6 @@ class mondelez_pdf(object):
         self.bold_contents_dict = {}
         self.pdfplumber_pdf = None
         self.is_nutrition_data_in_table = False
-
-    def pdf_to_docx_to_bold_contents(self):
-        try:
-            parse(self.input_pdf,self.converted_docx)
-        except:
-            pass
-        x = mammoth.convert_to_html(self.converted_docx, style_map="b => b").value
-        soup = BeautifulSoup(x, 'html.parser')
-        # print(soup)
-        main_content = []
-        for data in soup.find_all('td'):
-            print(str(data))
-            print("--------"*10)
-            if str(data.text).strip() and '<b>' in str(data):
-            # if str(data.text).strip():
-                column = str(data)
-                column = re.sub(r'<(?!b|\/b)\D{1,3}?>', '', str(column))
-                column = re.sub(r'\<\/?br\/?\>', '\n', str(column))
-                # column = re.sub(r"\<\/?(td|tr)\b.*\>", "", str(column),flags=re.I).strip()
-                column = re.sub(r"\<\/?(td|tr).*?\>", "", str(column),flags=re.I).strip()
-                column = re.sub(r"<b>\s*<\/b>","", str(column)).strip()
-                print("column----->", column)
-                # column = re.sub(r'<\D{1,2}>([^A-Za-z]*)<\/\D{1,2}>', lambda pat: pat.group(1), str(column))
-                self.bold_contents_dict[re.sub(r"<.*?>","",column,flags=re.M)] = column
-                print("----------"*10)
-                main_content.append(column)
-        self.bold_contents_tuple = tuple(main_content)
-        # print('tuple_content---->',self.bold_contents_tuple)
-        return True
-
-    # def get_bold_contents(self,text):
-    #     print('search text------->',text)
-    #     _dict = {}
-    #     # content, score = process.extractOne(text,self.bold_contents_tuple ,scorer=fuzz.token_set_ratio)
-    #     # content = [re.sub(r'\<.*\>','',content) for content in self.bold_contents_tuple]
-    #     # content, score = process.extractOne(text,self.bold_contents_tuple ,scorer=fuzz.token_set_ratio)
-    #     content_ = process.extract(text,self.bold_contents_tuple ,scorer=fuzz.token_set_ratio)
-    #     # print("see the score bugger")
-    #     # print('vaaada----->','-------------->',content_)
-    #     for tuple_content , _ in content_:
-    #         cleaned_text = re.sub(r'\<.*\>', '', tuple_content)
-    #         print('cleaned text -------->',cleaned_text)
-    #         score_ = fuzz.ratio(cleaned_text,text)
-    #         _dict[score_] = tuple_content
-    #     print(_dict)
-    #     if _dict and max(_dict,key=_dict.get) > 70:
-    #         # print(max(_dict, key=_dict.get), '<----------dicita paaruda----->', _dict[max(_dict, key=_dict.get)])
-    #         return _dict[max(_dict,key=_dict.get)]
-    #     else:
-    #         return False
-
-    # def get_bold_contents(self,text):
-    #     print('search text------->',text)
-    #     # print(self.bold_contents_dict.keys())
-    #     # content, score = process.extractOne(text,self.bold_contents_tuple ,scorer=fuzz.token_sort_ratio)
-    #     content, score = process.extractOne(text,self.bold_contents_dict.keys(),scorer=fuzz.ratio)
-    #     _, set_score = process.extractOne(text,self.bold_contents_dict.keys(),scorer=fuzz.token_sort_ratio)
-    #     print('score---------->',score,'------->',self.bold_contents_dict[content])
-    #     print('set_score---------->',set_score,'------->',self.bold_contents_dict[content])
-    #     if score >= 90 or set_score >= 85:
-    #         print('found text--------->', content)
-    #         for bold_text in re.finditer(r"<b>(.*?)<\/b>",self.bold_contents_dict[content]):
-    #             text_to_replace = bold_text.group()
-    #             if not bold_text.group(1) + " " in text:
-    #                 text_to_replace = bold_text.group() + " "
-    #             if not " " + bold_text.group(1) in text:
-    #                 text_to_replace = " " + bold_text.group()
-    #             try:
-    #                 text = text.replace(bold_text.group(1),text_to_replace,1)
-    #             except:
-    #                 text = re.sub(bold_text.group(1),text_to_replace,text)
-    #             finally:
-    #                 text = re.sub(r" {2,4}"," ",text)
-    #                 text = re.sub(r"\( ","(",text)
-    #                 text = re.sub(r"^ ","",text,flags=re.M)
-    #                 text = text.strip()
-    #         return text
-    #     else:
-    #         return False
-
-    def get_bold_contents(self,text):
-        # print('search text------->',text.strip().split("\n"))
-        # print(self.bold_contents_dict.keys())
-        # content, score = process.extractOne(text,self.bold_contents_tuple ,scorer=fuzz.token_sort_ratio)
-        content, score = process.extractOne(text,self.bold_contents_dict.keys(),scorer=fuzz.ratio)
-        _, set_score = process.extractOne(text,self.bold_contents_dict.keys(),scorer=fuzz.token_sort_ratio)
-        print('score---------->',score,'------->',self.bold_contents_dict[content].strip().split("\n"))
-        print("-----"*10)
-        print('set_score---------->',set_score,'------->',self.bold_contents_dict[content])
-        # print("----->SFJVFSKJNV",abs(len(text.strip().split("\n")) - len(self.bold_contents_dict[content].strip().split("\n"))))
-        if score >= 90 or set_score >= 85:
-            if abs(len(text.strip().split("\n")) - len(self.bold_contents_dict[content].strip().split("\n"))) > 3:
-                print("text replace method")
-                for bold_text in re.finditer(r"<b>(.*?)<\/b>", self.bold_contents_dict[content]):
-                    text_to_replace = bold_text.group()
-                    if not bold_text.group(1) + " " in text:
-                        text_to_replace = bold_text.group() + " "
-                    if not " " + bold_text.group(1) in text:
-                        text_to_replace = " " + bold_text.group()
-                    try:
-                        text = text.replace(bold_text.group(1),text_to_replace,1)
-                    except:
-                        text = re.sub(bold_text.group(1),text_to_replace,text)
-                    finally:
-                        text = re.sub(r" {2,4}"," ",text)
-                        text = re.sub(r"\( ","(",text)
-                        text = re.sub(r"^ ", "", text, flags=re.M)
-                        text = text.strip()
-                    return text
-            return self.bold_contents_dict[content]
-        else:
-            return False
 
     def get_input(self,input_pdf):
         if input_pdf.startswith('\\'):
@@ -209,11 +91,67 @@ class mondelez_pdf(object):
             print('pdf cleaned')
             return self.input_pdf_original
 
-    # def pdf_to_image(self):
-    #     images = convert_from_path(self.input_pdf)
-    #     for index, image in enumerate(images):
-    #         image.save(f'{self.temp_directory.name}/{index + 1}.png')
-    #     return 'success'
+    def pdf_to_docx_to_bold_contents(self):
+        try:
+            parse(self.input_pdf,self.converted_docx)
+        except:
+            pass
+        x = mammoth.convert_to_html(self.converted_docx, style_map="b => b").value
+        soup = BeautifulSoup(x, 'html.parser')
+        # print(soup)
+        main_content = []
+        for data in soup.find_all('td'):
+            print(str(data))
+            print("--------"*10)
+            if str(data.text).strip() and '<b>' in str(data):
+            # if str(data.text).strip():
+                column = str(data)
+                column = re.sub(r'<(?!b|\/b)\D{1,3}?>', '', str(column))
+                column = re.sub(r'\<\/?br\/?\>', '\n', str(column))
+                # column = re.sub(r"\<\/?(td|tr)\b.*\>", "", str(column),flags=re.I).strip()
+                column = re.sub(r"\<\/?(td|tr).*?\>", "", str(column),flags=re.I).strip()
+                column = re.sub(r"<b>\s*<\/b>","", str(column)).strip()
+                print("column----->", column)
+                # column = re.sub(r'<\D{1,2}>([^A-Za-z]*)<\/\D{1,2}>', lambda pat: pat.group(1), str(column))
+                self.bold_contents_dict[re.sub(r"<.*?>","",column,flags=re.M)] = column
+                print("----------"*10)
+                main_content.append(column)
+        self.bold_contents_tuple = tuple(main_content)
+        # print('tuple_content---->',self.bold_contents_tuple)
+        return True
+
+    def get_bold_contents(self,text):
+        # print('search text------->',text.strip().split("\n"))
+        # print(self.bold_contents_dict.keys())
+        # content, score = process.extractOne(text,self.bold_contents_tuple ,scorer=fuzz.token_sort_ratio)
+        content, score = process.extractOne(text,self.bold_contents_dict.keys(),scorer=fuzz.ratio)
+        _, set_score = process.extractOne(text,self.bold_contents_dict.keys(),scorer=fuzz.token_sort_ratio)
+        print('score---------->',score,'------->',self.bold_contents_dict[content].strip().split("\n"))
+        print("-----"*10)
+        print('set_score---------->',set_score,'------->',self.bold_contents_dict[content])
+        # print("----->SFJVFSKJNV",abs(len(text.strip().split("\n")) - len(self.bold_contents_dict[content].strip().split("\n"))))
+        if score >= 90 or set_score >= 85:
+            if abs(len(text.strip().split("\n")) - len(self.bold_contents_dict[content].strip().split("\n"))) > 3:
+                print("text replace method")
+                for bold_text in re.finditer(r"<b>(.*?)<\/b>", self.bold_contents_dict[content]):
+                    text_to_replace = bold_text.group()
+                    if not bold_text.group(1) + " " in text:
+                        text_to_replace = bold_text.group() + " "
+                    if not " " + bold_text.group(1) in text:
+                        text_to_replace = " " + bold_text.group()
+                    try:
+                        text = text.replace(bold_text.group(1),text_to_replace,1)
+                    except:
+                        text = re.sub(bold_text.group(1),text_to_replace,text)
+                    finally:
+                        text = re.sub(r" {2,4}"," ",text)
+                        text = re.sub(r"\( ","(",text)
+                        text = re.sub(r"^ ", "", text, flags=re.M)
+                        text = text.strip()
+                    return text
+            return self.bold_contents_dict[content]
+        else:
+            return False
 
     def find_contours(self,input_image):
         im = cv2.imread(input_image)
@@ -330,6 +268,7 @@ class mondelez_pdf(object):
                 print('japanese table')
                 table_check = self.table_check_japanese
             else:
+                print("**********normal table------")
                 table_check = self.table_check
             similarity_check = lambda x : cosine_similarity(laser.embed_sentences(x, lang='en'),
                                            laser.embed_sentences(table_check, lang='en').mean(0).reshape(1, 1024))[0][0]
@@ -409,13 +348,77 @@ class mondelez_pdf(object):
         # print('*****'*5)
         return {'probability': max_probability, 'output': pred_output}
 
-    def nutrition_table_processing(self,page_no, table_type=None):
+    def nutrition_table_processing(self,nutrition_df,table_type=None):
+        nutrition_dict = {}
+        nutrition_headings = {}
+        serving_size = {}
+        if isinstance(nutrition_df,pd.DataFrame):
+            rows , columns = nutrition_df.shape
+            for column in range(columns)[:1]:
+                for row in range(rows):
+                    if table_type == 'Normal':
+                        nutrition_header = str(nutrition_df[column][row]).strip().lower()
+                        if "serving size" in nutrition_header:
+                            if "SERVING_SIZE" in serving_size:
+                                serving_size["SERVING_SIZE"].append({'en': str(nutrition_df[column][row]).split(":")[-1]})
+                            else:
+                                serving_size["SERVING_SIZE"] = [{'en': str(nutrition_df[column][row]).split(":")[-1]}]
+                        if "servings per" in nutrition_header:
+                            if "SERVING_PER_CONTAINER" in serving_size:
+                                serving_size["SERVING_PER_CONTAINER"].append({'en': str(nutrition_df[column][row]).split(":")[-1]})
+                            else:
+                                serving_size["SERVING_PER_CONTAINER"] = [{'en': str(nutrition_df[column][row]).split(":")[-1]}]
+                        if nutrition_header in ("项目"):
+                            header_list = list(nutrition_df.loc[row])
+                            header_list = [header for header in header_list if header and header.strip()]
+                            for header in header_list:
+                                print("nutrition_header---->", header)
+                                if "NUTRI_TABLE_HEADERS" in nutrition_headings:
+                                    nutrition_headings["NUTRI_TABLE_HEADERS"].append({'en': header})
+                                else:
+                                    nutrition_headings["NUTRI_TABLE_HEADERS"] = [{'en': header}]
+                            print("nutrition_headings------>",header_list)
+                            continue
+                        if nutrition_header:
+                            nutrition_header = str(nutrition_df[column][row]).split('/')[0]
+                            nutrition_header = re.sub(r"\b(mg|g|kcal)","",nutrition_header).strip()
+                        elif any(('kcal' in str(nutrition_df[_col][row]).lower() for _col in range(columns)[column + 1:] if str(nutrition_df[_col][row]).strip())):
+                            nutrition_header = 'calories'
+                        else:
+                            continue
+                        nutrition_output = base('ferrero_header', mondelez_pdf_plr_nutrition_model_location).prediction(get_display(nutrition_header))
+                        print(nutrition_header)
+                        if nutrition_output['output'] not in ['None','header','nutrition_table_reference','Nutrition information'] and nutrition_output['probability'] > 0.70 :
+                            for _col in range(columns)[column+1:]:
+                                value = nutrition_df[_col][row]
+                                if isinstance(value,str) and str(nutrition_df[_col][row]).strip():
+                                    value = str(nutrition_df[_col][row]).strip()
+                                    print("inside--->",value)
+                                    value_header = 'PDV' if "%" in value else "Value"
+                                    if nutrition_output['output'] in nutrition_dict:
+                                        print("appending---->",value)
+                                        nutrition_dict[nutrition_output['output']].append({value_header:{'en':value}})
+                                    else:
+                                        nutrition_dict[nutrition_output['output']] = [{value_header:{'en':value}}]
+                            else:
+                                # placing copy_notes
+                                if nutrition_output['output'] in nutrition_dict:
+                                    nutrition_dict[nutrition_output['output']].append({"copy_notes": {'en': str(nutrition_df[column][row])}})
+                                else:
+                                    nutrition_dict[nutrition_output['output']] = [{"copy_notes": {'en': str(nutrition_df[column][row])}}]
+        if serving_size:
+            return {"NUTRITION_FACTS":nutrition_dict,**nutrition_headings,**serving_size}
+        else:
+            return {"NUTRITION_FACTS": nutrition_dict, **nutrition_headings}
+
+    def nutrition_table_processing_old(self,page_no, table_type=None):
         print('inside nutrition table processing')
         nutrition_dict = {}
         nutrition_headings = {}
         serving_size = {}
         # tables = camelot.read_pdf(self.input_pdf, pages=str(page_no), flavor='stream', row_tol=9)
-        tables = camelot.read_pdf(self.input_pdf, pages=str(page_no), flavor='stream', row_tol=9,edge_tol=150)
+        # tables = camelot.read_pdf(self.input_pdf, pages=str(page_no), flavor='stream', row_tol=9,edge_tol=150)
+        tables = camelot.read_pdf(self.input_pdf, pages=str(page_no), flavor='stream', row_tol=9)
         no_of_tables = len(tables)
         nutrition_df = None
         nutrition_start_index = None
@@ -458,6 +461,7 @@ class mondelez_pdf(object):
                 if self.is_nutrition_table_or_not(df.loc[0].to_list()):
                     print(df)
                     nutrition_df = df
+
         if isinstance(nutrition_df,pd.DataFrame):
             rows , columns = nutrition_df.shape
             for column in range(columns)[:1]:
@@ -547,90 +551,6 @@ class mondelez_pdf(object):
                 return {"NUTRITION_FACTS": nutrition_dict, **nutrition_headings}
         # else:
         #     return {}
-
-    # def nutrition_table_processing(self,page_no, table_type=None):
-    #     print('inside nutrition table processing')
-    #     nutrition_dict = {}
-    #     nutrition_headings = {}
-    #     # tables = camelot.read_pdf(self.input_pdf, pages=str(page_no), flavor='stream', row_tol=9)
-    #     tables = camelot.read_pdf(self.input_pdf, pages=str(page_no), flavor='stream', row_tol=9,edge_tol=150)
-    #     no_of_tables = len(tables)
-    #     for table_no in range(no_of_tables):
-    #         print(tables[table_no].df)
-    #         table = tables[table_no].data
-    #         table = self.penang_nutrition_table_data_split(table)
-    #         # df = tables[table_no].df
-    #         df = pd.DataFrame(table)
-    #         # if self.is_nutrition_table_or_not(str(df[0][0]).split('/')[0]):
-    #         if self.is_nutrition_table_or_not(df.loc[0].to_list()):
-    #             print(df)
-    #             rows , columns = df.shape
-    #             for column in range(columns)[:1]:
-    #                 for row in range(rows)[1:]:
-    #                     if table_type == 'Normal':
-    #                         nutrition_header = str(df[column][row]).strip().lower()
-    #                         if nutrition_header in ("项目"):
-    #                             header_list = list(df.loc[row])
-    #                             header_list = [header for header in header_list if header.strip()]
-    #                             for header in header_list:
-    #                                 if "NUTRI_TABLE_HEADERS" in nutrition_headings:
-    #                                     nutrition_headings["NUTRI_TABLE_HEADERS"].append({'en': header})
-    #                                 else:
-    #                                     nutrition_headings["NUTRI_TABLE_HEADERS"] = [{'en': header}]
-    #                             print("nutrition_headings------>",header_list)
-    #                         if nutrition_header:
-    #                             nutrition_header = str(df[column][row]).split('/')[0]
-    #                         elif any(('kcal' in str(df[_col][row]).lower() for _col in range(columns)[column + 1:] if str(df[_col][row]).strip())):
-    #                             nutrition_header = 'calories'
-    #                         else:
-    #                             continue
-    #                         nutrition_output = base('ferrero_header', ferrero_header_model).prediction(get_display(nutrition_header))
-    #                         print(nutrition_header)
-    #                         if nutrition_output['output'] not in ['None','header','nutrition_table_reference'] and nutrition_output['probability'] > 0.50 :
-    #                             for _col in range(columns)[column+1:]:
-    #                                 value = df[_col][row]
-    #                                 if isinstance(value,str) and str(df[_col][row]).strip():
-    #                                     # placing copy_notes
-    #                                     nutrition_dict[nutrition_output['output']] = [{"copy_notes": {'en': str(df[column][row])}}]
-    #
-    #                                     value = str(df[_col][row]).strip()
-    #                                     print(value)
-    #                                     value_header = 'PDV' if "%" in value else "Value"
-    #                                     if nutrition_output['output'] in nutrition_dict:
-    #                                         nutrition_dict[nutrition_output['output']].append({value_header:{'en':value}})
-    #                                     else:
-    #                                         nutrition_dict[nutrition_output['output']] = [{value_header:{'en':value}}]
-    #                         elif nutrition_output['output'] == "header":
-    #                             print("nutritipn_head---->",nutrition_header)
-    #                     else:
-    #                         header = str(df[column][row]).strip()
-    #                         header = re.sub(r"\(.*\)", '', header)
-    #                         if header and 'serving' not in header.lower():
-    #                             nutrition_header = re.findall(r"^\n?([A-Za-z].*)\s?\/", header, re.I | re.MULTILINE)
-    #                             # print('nutrition_header----->', nutrition_header)
-    #                             if nutrition_header:
-    #                                 nutrition_header = nutrition_header[0]
-    #                                 value = re.findall(r"(\<?s?\d?\.?\d{1,2}\s?(g|kj|kcal|mg|mcg))",str(df[column][row]), re.I)
-    #                                 # print('value------>', value)
-    #                                 if value:
-    #                                     value_header_regex = "PDV" if "%" in value else "Value"
-    #                                     value = value[0][0]
-    #                                     if value.strip():
-    #                                         if nutrition_header in nutrition_dict:
-    #                                             nutrition_dict[nutrition_header].append({value_header_regex: {'en': value}})
-    #                                         else:
-    #                                             nutrition_dict[nutrition_header] = [{value_header_regex: {'en': value}}]
-    #                                 for _col in range(columns)[column + 1:]:
-    #                                     value = df[_col][row]
-    #                                     if isinstance(value,str) and str(df[_col][row]).strip():
-    #                                         value = str(df[_col][row]).strip()
-    #                                         value_header = 'PDV' if "%" in value else "Value"
-    #                                         if nutrition_header in nutrition_dict:
-    #                                             nutrition_dict[nutrition_header].append({value_header: {'en': value}})
-    #                                         else:
-    #                                             nutrition_dict[nutrition_header] = [{value_header: {'en': value}}]
-    #     print('Nutrition_dictionary---->',{"NUTRITION_FACTS":nutrition_dict,**nutrition_headings})
-    #     return {"NUTRITION_FACTS":nutrition_dict,**nutrition_headings}
 
     def normal_table_processing(self,df):
         normal_dict = {}
@@ -959,16 +879,75 @@ class mondelez_pdf(object):
         return df_copy
 
     def get_tables(self,input_pdf, page_no):
+        camelot_tables = []
         cv = Converter(input_pdf)
         tables = cv.extract_tables(start=page_no - 1, end=page_no)
         cv.close()
-        camelot_tables = camelot.read_pdf(input_pdf,pages=str(page_no),lattice=True, line_scale=60)
-        for can_tab_count,cam_tab in enumerate(camelot_tables):
-            print("cam tables_number------->",can_tab_count)
-            print(cam_tab.df)
+        print("tables------>",tables)
+        print(colored(f"tables count------>{len(tables)}","red"))
+        cam_table_to_skip = []
+        camelot_tables_by_border = camelot.read_pdf(input_pdf,pages=str(page_no),lattice=True)
+        # camelot_tables = camelot.read_pdf(input_pdf,pages=str(page_no),flavor="stream")
+        for table in tables:
+            table_df = pd.DataFrame(table)
+            if "<NEST TABLE>" in table_df[0][0] or "nutrition information*" in "".join(table_df[0].apply(func=str)).lower() :
+                continue
+            elif len(table_df.columns) == 1:
+                camelot_tables.append(table)
+                continue
+            else:
+                combination_passed = False
+                for idx,cam_tab in enumerate(camelot_tables_by_border):
+                    # if str(table_df[0][0]) in cam_tab.df[0][0]:
+                    print(colored(f"score_checking--------->{table_df[0][0]}------{cam_tab.df[0][0]}","red"))
+                    if str(table_df[0][0]).strip() and fuzz.ratio(str(table_df[0][0]).replace(" ","").strip(),str(cam_tab.df[0][0]).replace(" ","").strip()) > 90:
+                        print(colored(f"passed----->{idx}","green"))
+                        camelot_tables.append(table)
+                        cam_table_to_skip.append(idx)
+                        combination_passed = True
+                        break
+                    elif len(table_df.index) == 1 and not str(table_df[0][0]).strip():
+                        if fuzz.ratio(str("".join(table_df.loc[0].to_list())).strip(),str("".join(cam_tab.df.loc[0].to_list())).strip()) > 90:
+                            camelot_tables.append(table)
+                            cam_table_to_skip.append(idx)
+                            combination_passed = True
+                            break
+                    elif not str(table_df[0][0]).strip() and len(table_df.index) > 1:
+                        if str(table_df[0][0]).strip() and fuzz.ratio(str("".join(table_df[0].apply(func=str)).lower()).replace(" ", "").strip(),str("".join(cam_tab.df[0].apply(func=str)).lower()).replace(" ","").strip()) > 90:
+                            print(colored(f"passed----->{idx}", "green"))
+                            camelot_tables.append(table)
+                            cam_table_to_skip.append(idx)
+                            combination_passed = True
+                            break
+                else:
+                    if not combination_passed:
+                        camelot_tables.append(table)
+                        print(colored(f"table not captured in camelot", "green"))
+
+        camelot_tables_by_border_cleaned = []
+        for idx, cam_tab in enumerate(camelot_tables_by_border):
+            if idx not in cam_table_to_skip:
+                camelot_tables_by_border_cleaned.append(cam_tab)
+
+        for can_tab_count,cam_tab in enumerate(camelot_tables_by_border_cleaned):
+            first_col = [cam_tab.cols[0][0],cam_tab.cols[-1][-1]]
+            last_row = [cam_tab.rows[0][0],cam_tab.rows[-1][-1]]
+            coordinates_int = [first_col[0],last_row[0],first_col[-1],last_row[-1]]
+            table_stream = camelot.read_pdf(input_pdf, flavor="stream", pages=str(page_no), table_areas=[f'{coordinates_int[0]},{int(coordinates_int[1])},{coordinates_int[2]},{coordinates_int[3]}'])
+            table_stream_df = table_stream[0].df
+            print("first dataframe------>",table_stream_df)
+            if "nutrition information*" in "".join(table_stream[0].df[0].apply(func=str)).lower() and "energy" not in "".join(table_stream[0].df[0].apply(func=str)).lower():
+                table_stream_df = table_stream_df.iloc[:,table_stream_df.columns[1]:]
+                # table_stream_list = [["NUTRITION INFORMATION"]].extend(table_stream_df.values.tolist())
+                table_stream_list = table_stream_df.values.tolist()
+                table_stream_list.insert(0,["NUTRITION INFORMATION"])
+            else:
+                table_stream_list = table_stream_df.values.tolist()
+            camelot_tables.append(table_stream_list)
             print("-------"*10)
         table_count = 0
-        for table in tables:
+
+        for table in camelot_tables:
             print("table_number--->",table_count)
             print(colored(page_no,'yellow'))
             print("table_heading----->",table[0][0])
@@ -1006,11 +985,25 @@ class mondelez_pdf(object):
         if (rows, columns) == (ori_rows, ori_columns):
             if columns == 1 and rows == 1:
                 yield (table[0][0], 'content')
+            elif columns == 1 and rows > 1:
+                content = []
+                for row in list(df.index):
+                    content.append(" ".join([value for value in df.loc[row].tolist() if value]))
+                content = "\n".join(content)
+                print("content_extracted- new---->", content)
+                yield (content, "content")
             else:
                 yield (table, 'table')
         else:
             if columns == 1 and rows == 1:
                 yield (df.values[0][0], 'content')
+            elif columns == 1 and rows > 1:
+                content = []
+                for row in list(df.index):
+                    content.append(" ".join([value for value in df.loc[row].tolist() if value]))
+                content = "\n".join(content)
+                print("content_extracted- new---->", content)
+                yield (content, "content")
             else:
                 yield (df.values, 'table')
 
@@ -1020,20 +1013,19 @@ class mondelez_pdf(object):
         self.pdfplumber_pdf = pdfplumber.open(self.input_pdf)
         # diverting plr pdf to plr code
         extracted_text = self.pdfplumber_pdf.pages[0].extract_text()
-        if "DEVELOPMENT" in extracted_text and "Preliminary" in extracted_text:
-            return mondelez_main_plr(self.input_pdf,pages)
-        if re.findall(r"India - IN",extracted_text,flags=re.I|re.M|re.S):
-            return mondelez_india_pdf.main(self.input_pdf,pages)
-        # pdf_to_image_status = self.pdf_to_image()
-        # assert pdf_to_image_status == 'success', 'pdf to image conversion failed'
         self.pdf_to_docx_to_bold_contents()
         for page in pages.split(','):
             print(f'{page}')
             if int(page)-1 in range(len(self.pdfplumber_pdf.pages)):
                 page_dict = {}
-                # input_image = f'{self.temp_directory.name}/{page}.png'
-                # for bounding_box in self.find_contours(input_image):
-                #     for content, type in self.content_inside_bounding_box(int(page), bounding_box):
+                nutrition_linear_format = re.findall(r"(?<=linear format)(.*)(?=(Additional|for inners:|approx. value))",self.pdfplumber_pdf.pages[int(page)-1].extract_text(),flags=re.M|re.I|re.S)
+                design_instruction = re.findall(r"(?=Additional Instructions)(.*)",self.pdfplumber_pdf.pages[int(page)-1].extract_text(),flags=re.M|re.I|re.S)
+
+                if nutrition_linear_format:
+                    page_dict.setdefault("NUTRITIONAL_CLAIM",[]).append({classify(str(nutrition_linear_format[0][0]).strip())[0]:str(nutrition_linear_format[0][0]).strip()})
+                if design_instruction:
+                    page_dict.setdefault("design instruction",[]).append({classify(str(design_instruction[0]).strip())[0]:str(design_instruction[0]).strip()})
+
                 for table in self.get_tables(self.input_pdf,int(page)):
                     for content, type in self.table_category(table):
                         print(colored(type,'magenta'))
@@ -1043,15 +1035,20 @@ class mondelez_pdf(object):
                             if df.empty:
                                 continue
                             table_heading = str(df[0][0]).split('/')
-                            # print('table_heading', table_heading)
+                            print('table_heading------>', table_heading)
                             table_heading = [split_heading for split_heading in table_heading if split_heading.strip()]
                             print('table_heading-------->', table_heading)
                             type = 'Normal' if len(table_heading) == 1 else 'Arabic'
                             if table_heading and "NEST TABLE" not in table_heading[0]:
+                                # if "nutrition information" in "".join(df[0].apply(func=str)).lower() and "energy" in "".join(df[0].apply(func=str)).lower():   # new mondelez account nutrition table processing
+                                #     print("puthu maapla")
+                                #     nutrition_dict = self.nutrition_table_processing(nutrition_df=df, table_type=type)
+                                #     print("nutrition_dict------->",nutrition_dict)
+                                #     continue
                                 if self.is_nutrition_table_or_not(table_heading[0].strip().split('\n')[0]):
                                     print('inside nutrition table--------->',type)
                                     # need to pass to nutrition table processing
-                                    nutrition_dict = self.nutrition_table_processing(page_no=page,table_type=type)
+                                    nutrition_dict = self.nutrition_table_processing(nutrition_df=df,table_type=type)
                                     if isinstance(nutrition_dict,dict):
                                         for key,value in nutrition_dict.items():
                                             if key == "NUTRITION_FACTS":
@@ -1079,21 +1076,6 @@ class mondelez_pdf(object):
                                         else:
                                             page_dict[key] = value
                                     # page_dict = {**page_dict,**normal_dict}
-                            elif table_heading and 'NEST TABLE' in table_heading[0]:
-                                print("nest table da")
-                                nutrition_dict = self.nutrition_table_processing(page_no=page, table_type='Normal')
-                                print("NUTRITION_---DICT------>",nutrition_dict)
-                                for key, value in nutrition_dict.items():
-                                    if key == "NUTRITION_FACTS":
-                                        if key in page_dict:
-                                            page_dict[key].append(value)
-                                        else:
-                                            page_dict[key] = [value]
-                                    else:
-                                        if key in page_dict:
-                                            page_dict[key].extend(value)
-                                        else:
-                                            page_dict[key] = value
                             else:
                                 print('inside fault region')
                                 normal_dict = self.normal_table_processing(df)
