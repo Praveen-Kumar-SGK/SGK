@@ -1009,10 +1009,10 @@ class mondelez_india_pdf(object):
 
     def main(self,input_pdf,pages):
         final_dict = {}
-        self.input_pdf = self.get_input(input_pdf)
+        self.input_pdf = input_pdf
         self.pdfplumber_pdf = pdfplumber.open(self.input_pdf)
         # diverting plr pdf to plr code
-        extracted_text = self.pdfplumber_pdf.pages[0].extract_text()
+        # extracted_text = self.pdfplumber_pdf.pages[0].extract_text()
         self.pdf_to_docx_to_bold_contents()
         for page in pages.split(','):
             print(f'{page}')
