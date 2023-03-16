@@ -1023,7 +1023,7 @@ class mondelez_pdf(object):
         if "DEVELOPMENT" in extracted_text and "Preliminary" in extracted_text:
             return mondelez_main_plr(self.input_pdf,pages)
         if re.findall(r"India - IN",extracted_text,flags=re.I|re.M|re.S):
-            return mondelez_india_pdf.main(self.input_pdf,pages)
+            return mondelez_india_pdf().main(input_pdf=self.input_pdf,pages=pages)
         # pdf_to_image_status = self.pdf_to_image()
         # assert pdf_to_image_status == 'success', 'pdf to image conversion failed'
         self.pdf_to_docx_to_bold_contents()
