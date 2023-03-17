@@ -352,11 +352,16 @@ def coca_cola_austria_main(file_path, pages):
     # input_pdf_location = f'{temp_directory.name}/input_pdf.pdf'
     # file_path = get_input(file_path,input_pdf_location)
     page_no = [int(pg) for pg in pages.split(',')]
+    pdfplumber_pdf = pdfplumber.open(file_path)
     all_pages = {}
     for pgs in page_no:
-        out1 = general_main(file_path, pgs,input_docx_location)
-        out2 = nutrition_main(file_path, pgs)
-        output = {**out1, **out2}
-        all_pages[str(pgs)] = output
+        if int(pgs)-1 in range(len(pdfplumber_pdf.pages)):
+            out1 = general_main(file_path, pgs,input_docx_location)
+            out2 = nutrition_main(file_path, pgs)
+            output = {**out1, **out2}
+            all_pages[str(pgs)] = output
+        else:
+            all_pages[str(pgs)] = {}
+
     return all_pages
 # ------------------------------------------------------------------------------
