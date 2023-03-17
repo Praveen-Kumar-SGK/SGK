@@ -79,6 +79,8 @@ from .pepsi_cep import Pepsi_CEP_Template
 from .home_and_laundry_cep import Home_and_laundry_CEP_Template
 from .jnj_listerine_cep import Listerine_CEP_Template
 from .mondelez_cep import Mondelez_CEP_Template
+from .mondelez_mea_plus_older_regions import mondelez_mea_word_main
+
 
 import smbclient
 from environment import MODE
@@ -728,7 +730,7 @@ class ai_hub(View):
         return function(file,pages)
 
     def docx_processing(self,file):
-        docx_accounts = {"mondelez":mw,"generalmills":main_gm,"unilever":unilever_docx_main,"kp":kp_main,'coke':coke_main,
+        docx_accounts = {"mondelez":mondelez_mea_word_main,"generalmills":main_gm,"unilever":unilever_docx_main,"kp":kp_main,'coke':coke_main,
         				'conagra':conagra_main}
         try:
             function = docx_accounts[self.account.lower()]
