@@ -2,9 +2,11 @@ import camelot
 import pandas as pd
 import joblib
 from langid import classify
-
+from .cocacola_pdf_austria import coca_cola_austria_main
+import pdfplumber
 import tempfile
 from environment import MODE
+import re
 
 if MODE == 'local':
     from .local_constants import *
@@ -46,6 +48,12 @@ class coco_cola:
     def main(self,input_pdf,pages):
         self.input_pdf = input_pdf
         self.pages = pages
+        self.pdfplumber_pdf = pdfplumber.open(self.input_pdf)
+        # diverting plr pdf to plr code
+        extracted_text = self.pdfplumber_pdf.pages[0].extract_text()
+        if re.findall(r"austria", extracted_text, flags=re.I|re.M|re.S):
+            print("redirecting to cocacola austria")
+            return coca_cola_austria_main(self.input_pdf,pages)
         final_dict = {}
         for page in self._pages.split(","):
             page_dict = {}

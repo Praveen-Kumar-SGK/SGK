@@ -211,3 +211,6 @@ mondelez_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/mondelez_cep.
 ## mondelez_mea_plus_older_regions_model
 mond_gen_model = r"/home/vijay/doc_extractor/model_dataset/mond_gen_model.sav"
 mond_nutri_model = r"/home/vijay/doc_extractor/model_dataset/mond_nut_model.sav"
+
+## cocacola_austria_model_loc
+cocacola_austria_model = r"/home/vijay/doc_extractor/model_dataset/coca_cola_austria_pdf.sav"
