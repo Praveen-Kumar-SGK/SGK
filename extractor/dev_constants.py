@@ -207,3 +207,7 @@ listerine_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/JnJ_Listerin
 
 ## mondelez_cep_model_loc
 mondelez_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/mondelez_cep.sav"
+
+## mondelez_mea_plus_older_regions_model
+mond_gen_model = r"/home/vijay/doc_extractor/model_dataset/mond_gen_model.sav"
+mond_nutri_model = r"/home/vijay/doc_extractor/model_dataset/mond_nut_model.sav"
