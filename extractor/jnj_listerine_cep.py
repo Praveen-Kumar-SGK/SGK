@@ -16,7 +16,8 @@ classifier = joblib.load(listerine_cep_model_loc)
 @dataclass
 class Listerine_CEP_Template:
     # splt_parameter: str = r"\.[\r\n]|\.\t| - |\. [\r\n]|. _ |.  "
-    splt_parameter: str = r"\n|\.[\r\n]|\.\t| - |\. [\r\n]|. _ |.  "
+    # splt_parameter: str = r"\n|\.[\r\n]|\.\t| - |\. [\r\n]|. _ |.  "
+    splt_parameter: str = r"\n|\.[\r\n]|\.\t| - |\. [\r\n]|\. _ |\.  |\. \+"
 
     def text_preprocessing(self, text, replace_tup=("-","&","*")):
         text = str(text)
@@ -87,7 +88,7 @@ class Listerine_CEP_Template:
         except ValueError:
             return False
 
-    def final_dict(self, txt_list, classifier, probability=0.80, unwanted_txt_len=3, below_thres_class="Unmapped",
+    def final_dict(self, txt_list, classifier, probability=0.70, unwanted_txt_len=3, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
         copy_elements_fixed = ["ADDRESS", "COUNTRY OF ORIGIN", "DESIGN_INSTRUCTIONS", "INGREDIENTS",
                                "LOT_NUMBER", "MARKETING_CLAIM", "NET CONTENT", "OPENING_INSTRUCTIONS",
