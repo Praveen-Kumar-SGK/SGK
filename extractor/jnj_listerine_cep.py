@@ -114,6 +114,8 @@ class Listerine_CEP_Template:
                     classified_output = "Unmapped"
                 elif (num_of_alphabets < 5) or (num_of_numbers >= num_of_alphabets):
                     classified_output = "Unmapped"
+                elif "www." in cleaned_txt.lower() and len(cleaned_txt) < 25:
+                    classified_output = "ADDRESS"
                 else:
                     if len(cleaned_txt) > int(unwanted_txt_len):
                         classified_output = classifier.predict(laser.embed_sentences(cleaned_txt, lang='en'))[0]
