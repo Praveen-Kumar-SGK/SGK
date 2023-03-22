@@ -338,7 +338,7 @@ def nutrition_main(file_path, pgs):
     dfs = nutrition_extraction(file_path, pgs)
     if len(dfs) > 1:
         out = nutrition_table(dfs)
-        fnl = {"NUTRITION_FACTS": out}
+        fnl = {"NUTRITION_FACTS": [out]}
     else:
         fnl = {}
     return fnl
