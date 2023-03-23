@@ -404,8 +404,8 @@ class mondelez_india_pdf(object):
                                 # placing copy_notes
                                 if nutrition_output['output'] in nutrition_dict:
                                     nutrition_dict[nutrition_output['output']].append({"copy_notes": {'en': str(nutrition_df[column][row])}})
-                                else:
-                                    nutrition_dict[nutrition_output['output']] = [{"copy_notes": {'en': str(nutrition_df[column][row])}}]
+                                # else:
+                                #     nutrition_dict[nutrition_output['output']] = [{"copy_notes": {'en': str(nutrition_df[column][row])}}]
         if serving_size:
             return {"NUTRITION_FACTS":nutrition_dict,**nutrition_headings,**serving_size}
         else:
