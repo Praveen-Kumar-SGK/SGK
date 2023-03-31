@@ -413,7 +413,7 @@ class Nestle_processing(object):
         if "label copy report" in text.lower() and "general info" in text.lower():
             print("Nestle Manchester")
             return self.main(file,pages)
-        elif "product labelling information" in text.lower():
+        elif "product labelling information" in text.lower() or "product detail information" in text.lower():
             print("Nestle Sydney")
             return main(file,pages)
         elif "interoffice memorandum" in text.lower():
