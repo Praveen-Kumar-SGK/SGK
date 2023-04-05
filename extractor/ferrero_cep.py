@@ -37,6 +37,34 @@ def text_preprocessing(text):
     text = re.sub(r"\[.*\]","",text)
     return text.strip()
 
+def bold_sequence(text):
+    tags = re.findall(r"b\$[01]", text, flags=re.M)
+    temp_tags = tags.copy()
+    index_to_ignore = []
+    for index, tag in enumerate(temp_tags):
+        if index not in index_to_ignore:
+            if tag == "b$1" and index == 0:
+                text = "".join(["b$0", text])
+            elif tag == "b$0" and index == range(len(tags))[-1]:
+                text = "".join([text, "b$1"])
+            elif tag == "b$0" and temp_tags[index + 1] == "b$1":
+                index_to_ignore.append(index + 1)
+    return text
+
+def italian_sequence(text):
+    tags = re.findall(r"i\$[01]", text, flags=re.M)
+    temp_tags = tags.copy()
+    index_to_ignore = []
+    for index, tag in enumerate(temp_tags):
+        if index not in index_to_ignore:
+            if tag == "i$1" and index == 0:
+                text = "".join(["i$0", text])
+            elif tag == "i$0" and index == range(len(tags))[-1]:
+                text = "".join([text, "i$1"])
+            elif tag == "i$0" and temp_tags[index + 1] == "i$1":
+                index_to_ignore.append(index + 1)
+    return text
+
 def final_dict(txt_list):
     copy_elements_fixed = ["COUNTRY OF ORIGIN", "USAGE INSTRUCTION", "ADDRESS", "SHELF_LIFE_STATEMENT",
                            "STORAGE INSTRUCTION", "ALLERGEN STATEMENT", "INGREDIENTS", "WARNING STATEMENT",
@@ -66,6 +94,8 @@ def final_dict(txt_list):
                 classified_output = 'Unmapped'
 
         value = txt.strip()
+        value = bold_sequence(value)
+        value = italian_sequence(value)
         if "b$0" in value and "b$1" not in value:
             value = "".join((value, "b$1"))
         elif "b$1" in value and "b$0" not in value:
