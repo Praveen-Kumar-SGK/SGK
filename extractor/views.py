@@ -81,6 +81,8 @@ from .jnj_listerine_cep import Listerine_CEP_Template
 from .mondelez_cep import Mondelez_CEP_Template
 from .mondelez_mea_plus_older_regions import mondelez_mea_word_main
 
+# annotation capture
+from .annotation_capture import capture_annotations_for_n_files
 
 import smbclient
 from environment import MODE
@@ -842,5 +844,10 @@ def tornado_mongo_search(request):
         final_dictionary["status"] = "500"
         final_dictionary["data"] = []
     return JsonResponse(final_dictionary)
+
+def annotation_capture(request):
+    files = request.GET.getlist('file', None)  # list
+    pages = request.GET.getlist('pages', None)  # list
+    return JsonResponse(capture_annotations_for_n_files(files,pages))
 
 
