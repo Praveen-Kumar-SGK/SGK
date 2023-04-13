@@ -214,3 +214,6 @@ mond_nutri_model = r"/home/vijay/doc_extractor/model_dataset/mond_nut_model.sav"
 
 ## cocacola_austria_model_loc
 cocacola_austria_model = r"/home/vijay/doc_extractor/model_dataset/coca_cola_austria_pdf.sav"
+
+## ascensia_model_loc
+ascensia_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/Redmond_model.sav"
