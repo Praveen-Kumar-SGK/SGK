@@ -34,13 +34,14 @@ class Ascensia_CEP_Template:
             for data_dict in value:
                 for text_frame_no, txt in data_dict.items():
                     if "www." in txt.lower():
-                        new_text = re.sub(r'\s*www\.\S+', '', txt)  # --> regex for only address without website
+                        # new_text = re.sub(r'\s*www\.\S+', '', txt)  # --> regex for only address without website
+                        new_text = re.sub(r'(b\$0)?\s*www\.\S+(b\$1)?', '', txt)  # --> regex for only address without website
                         text_add = str(new_text).split("*#")
                         for k1 in text_add:
                             if k1.strip():
                                 final_list.append(k1)
-                        match = re.search(r'(www\.\S+)',
-                                          txt).group()  # --> regex for only website without address
+                        # match = re.search(r'(www\.\S+)',txt).group()  # --> regex for only website without address
+                        match = re.search(r'(b\$0)?\s*www\.\S+(b\$1)?',txt).group()  # --> regex for only website without address
                         text_web = str(match).split("*#")
                         for k2 in text_web:
                             if k2.strip():
