@@ -683,6 +683,7 @@ from .fontem import fontem_main
 from .bng_foods_pdf_image_processing import BG_FOODS as bng_foods
 from .hormel_pdf_processing import Hormel_Processing as hp
 from .albertson_amer_pdf_processing import albertson_amer_main
+from .purina_excel import purina_main
 
 class ai_hub(View):
     files,pages,sheets,account,location = None, None, None, None, None
@@ -759,7 +760,7 @@ class ai_hub(View):
     def excel_processing(self,file,sheets):
         excel_accounts = {'kelloggs':kelloggs_main,'gfs':gfs_main,'unilever':unilever_excel_main,
                           'carrefour':carrefour_main,'pepsico':pepsico_main,'aldi':aldi ,'goodmanfielder':gf,
-                          'beiersdorf':beiersdorf_main,"fontem" :fontem_main,}
+                          'beiersdorf':beiersdorf_main,"fontem" :fontem_main, 'purina':purina_main}
         try:
             function = excel_accounts[self.account.lower()]
         except:
