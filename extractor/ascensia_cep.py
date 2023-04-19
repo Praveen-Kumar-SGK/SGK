@@ -33,26 +33,26 @@ class Ascensia_CEP_Template:
         for key, value in dictionary.items():
             for data_dict in value:
                 for text_frame_no, txt in data_dict.items():
-                    if "www." in txt.lower():
-                        # new_text = re.sub(r'\s*www\.\S+', '', txt)  # --> regex for only address without website
-                        new_text = re.sub(r'(b\$0)?\s*www\.\S+(b\$1)?', '', txt)  # --> regex for only address without website
-                        text_add = str(new_text).split("*#")
-                        for k1 in text_add:
-                            if k1.strip():
-                                final_list.append(k1)
-                        # match = re.search(r'(www\.\S+)',txt).group()  # --> regex for only website without address
-                        match = re.search(r'(b\$0)?\s*www\.\S+(b\$1)?',txt).group()  # --> regex for only website without address
-                        text_web = str(match).split("*#")
-                        for k2 in text_web:
-                            if k2.strip():
-                                final_list.append(k2)
-                            #                             item = re.sub(str(self.splt_parameter), lambda pat: pat.group(1) + "*#" + pat.group(2), txt,flags=re.M)  ## For applying into multi line content
-                    else:
+                    # if "www." in txt.lower():
+                    #     # new_text = re.sub(r'\s*www\.\S+', '', txt)  # --> regex for only address without website
+                    #     new_text = re.sub(r'(b\$0)?\s*www\.\S+(b\$1)?', '', txt)  # --> regex for only address without website
+                    #     text_add = str(new_text).split("*#")
+                    #     for k1 in text_add:
+                    #         if k1.strip():
+                    #             final_list.append(k1)
+                    #     # match = re.search(r'(www\.\S+)',txt).group()  # --> regex for only website without address
+                    #     match = re.search(r'(b\$0)?\s*www\.\S+(b\$1)?',txt).group()  # --> regex for only website without address
+                    #     text_web = str(match).split("*#")
+                    #     for k2 in text_web:
+                    #         if k2.strip():
+                    #             final_list.append(k2)
+                    #         #                             item = re.sub(str(self.splt_parameter), lambda pat: pat.group(1) + "*#" + pat.group(2), txt,flags=re.M)  ## For applying into multi line content
+                    # else:
                         #                                 itms = []
-                        item = str(txt).split("*#")
-                        for itm in item:
-                            if itm.strip():
-                                final_list.append(itm)
+                    item = str(txt).split("*#")
+                    for itm in item:
+                        if itm.strip():
+                            final_list.append(itm)
 
         return final_list
 
@@ -118,8 +118,8 @@ class Ascensia_CEP_Template:
                     classified_output = "LOCATION_OF_ORIGIN"
                 elif "trademark" in cleaned_txt.lower():
                     classified_output = "COPYRIGHT_TRADEMARK_STATEMENT"
-                elif "www." in cleaned_txt.lower():
-                    classified_output = "WEBSITE"
+                # elif "www." in cleaned_txt.lower():
+                #     classified_output = "WEBSITE"
                 elif "file name:" in cleaned_txt.lower() or "sku:" in cleaned_txt.lower() or "contour" in cleaned_txt.lower() and "label" in cleaned_txt.lower() or "microlet" in cleaned_txt.lower() or "contour next" in cleaned_txt.lower():
                     classified_output = "CONTENT_CLAIM"
                 else:
@@ -147,6 +147,8 @@ class Ascensia_CEP_Template:
             languages.add(lang)
             if value not in ["b$0 b$1", "b$0b$1", "b$0*b$1", "•", "b$0.b$1"] and value.strip():
                 if classified_output == "Unmapped":
+                    if "www." in value.lower():
+                        classified_output = "WEBSITE"
                     gen_cate_dic.setdefault(classified_output, []).append({lang: value})
                 else:
                     gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
