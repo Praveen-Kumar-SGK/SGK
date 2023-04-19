@@ -220,3 +220,6 @@ ascensia_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/Redmond_model
 
 ## purina_excel
 purina_excel_model_loc = r"/home/vijay/doc_extractor/model_dataset/purina_excel.sav"
+
+## quacker_pdf
+quacker_nutrition_model = r"/home/vijay/doc_extractor/model_dataset/quacker_Nutrition_model.sav"

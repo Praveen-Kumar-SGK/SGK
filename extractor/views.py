@@ -34,6 +34,7 @@ from .unilever_pdf import unilever_pdf_main , unilever_main  #unilever main func
 # from .ferrero_new import *
 # from .ferrero_final import output_io
 # from .excel_extraction1 import *
+from .quacker_pdf import quaker_main
 
 from .Albertson_trial1 import albertson_main
 
@@ -741,7 +742,7 @@ class ai_hub(View):
                         'ferrero': ferrero_extraction().main,'magnum':Holanda_y_Magnum_main,'dg':Dollar_General().main,'gwf':gwf_main,
                         'coke':coco_cola().main,'campbellsarnotts':arnott_main,"pladis":pladis_main,"woolworths":woolsworth_main,
                         'aldiequator':aldi_page_routing,'pepsico':pepsico_pdf_main,'bng':bng_foods().main,"hormel":hp().main,
-                        'sainsbury':sainsbury_main,'heinz':heinz_main,"albertsonamer":albertson_amer_main,}
+                        'sainsbury':sainsbury_main,'heinz':heinz_main,"albertsonamer":albertson_amer_main,"quaker":quaker_main}
         try:
             function = pdf_accounts[self.account.lower()]
         except:
