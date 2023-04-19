@@ -217,3 +217,6 @@ cocacola_austria_model = r"/home/vijay/doc_extractor/model_dataset/coca_cola_aus
 
 ## ascensia_model_loc
 ascensia_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/Redmond_model.sav"
+
+## purina_excel
+purina_excel_model_loc = r"/home/vijay/doc_extractor/model_dataset/purina_excel.sav"
