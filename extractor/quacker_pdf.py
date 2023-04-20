@@ -319,7 +319,7 @@ def quaker_main(input_file,pages):
                 keys, values = nutri_type1(nutrition_data[0])
 
             nut = nutri_keys_val(keys, values)
-            output[str(page + 1)] = {**gen, **{'NUTRITION_TABLE': [nut]}}
+            output[str(page + 1)] = {**gen, **{'NUTRITION_FACTS': [nut]}}
 
 
         else:
