@@ -7,6 +7,7 @@ from .excel_processing import *
 from dataclasses import dataclass, field
 from sklearn.metrics.pairwise import cosine_similarity
 from bidi.algorithm import get_display
+from .utils import GoogleTranslate , get_gs1_elements
 # ---------------------------------------------------------------------------------------------------------------------
 # Loading model
 classifier = joblib.load(mondelez_cep_model_loc)
@@ -174,7 +175,8 @@ class Mondelez_CEP_Template():
                 else:
                     gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
         # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
-        gen_cate_dic["copyElements"] = copy_elements_fixed
+        # gen_cate_dic["copyElements"] = copy_elements_fixed
+        gen_cate_dic["copyElements"] = list(set(get_gs1_elements()) - copy_elements)
         gen_cate_dic["languages"] = list(languages)
         return gen_cate_dic
 
