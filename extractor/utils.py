@@ -139,7 +139,7 @@ class GetInput:
         return self.final_location
 
 def get_gs1_elements():
-    gs1_objects = gs1_elements.objects.filter(enable=1).values()
+    gs1_objects = gs1_elements.objects.all().values()
     gs1_elements_list = [gs1["gs1_element"] for gs1 in gs1_objects]
     return gs1_elements_list
 
