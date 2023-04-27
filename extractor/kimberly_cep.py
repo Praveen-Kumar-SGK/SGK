@@ -1,5 +1,6 @@
 from .excel_processing import *
 from dataclasses import dataclass,field
+from .utils import GoogleTranslate , get_gs1_elements
 
 # model_loc = r"/Users/sakthivel/Documents/SGK/Kimberly/Dataset/kimberly_cep_model.sav"
 # joblib.dump(classifier,model_loc)
@@ -120,8 +121,8 @@ class CEP_Template:
                     gen_cate_dic.setdefault(classified_output, []).append({lang: value})
                 else:
                     gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
-        # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
-        gen_cate_dic["copyElements"] = copy_elements_fixed
+        gen_cate_dic["copyElements"] = list(set(get_gs1_elements()) - copy_elements)
+        # gen_cate_dic["copyElements"] = copy_elements_fixed
         gen_cate_dic["languages"] = list(languages)
         return gen_cate_dic
 

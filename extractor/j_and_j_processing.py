@@ -1,4 +1,5 @@
 from .excel_extraction import *
+from .utils import GoogleTranslate , get_gs1_elements
 
 
 # model_loc = r"/Users/sakthivel/Documents/SGK/J&J/Dataset/j_and_j_model.sav"
@@ -120,8 +121,8 @@ def final_dict(txt_list):
                 gen_cate_dic.setdefault(classified_output, []).append({lang: value})
             else:
                 gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
-    # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
-    gen_cate_dic["copyElements"] = copy_elements_fixed
+    gen_cate_dic["copyElements"] = list(set(get_gs1_elements()) - copy_elements)
+    # gen_cate_dic["copyElements"] = copy_elements_fixed
     gen_cate_dic["languages"] = list(languages)
     return gen_cate_dic
 
