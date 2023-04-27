@@ -3,7 +3,7 @@ import joblib
 from langid import classify
 from .excel_processing import *
 from dataclasses import dataclass, field
-
+from .utils import GoogleTranslate , get_gs1_elements
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------
 # Loading model
@@ -163,8 +163,8 @@ class Home_and_laundry_CEP_Template():
                     gen_cate_dic.setdefault(classified_output, []).append({lang: value})
                 else:
                     gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
-        # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
-        gen_cate_dic["copyElements"] = copy_elements_fixed
+        gen_cate_dic["copyElements"] = list(set(get_gs1_elements()) - copy_elements)
+        # gen_cate_dic["copyElements"] = copy_elements_fixed
         gen_cate_dic["languages"] = list(languages)
         return gen_cate_dic
 
