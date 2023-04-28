@@ -1,6 +1,6 @@
 import os
 from google.cloud import translate_v2
-from .models import google_api
+from .models import google_api,gs1_elements
 from .custom_pipeline import LaserVectorizer
 import torch
 from torch.nn import functional
@@ -138,8 +138,8 @@ class GetInput:
             self.clean_pdf()
         return self.final_location
 
-# import smbclient
-# document_location = r"/Users/vijaykanagaraj/PycharmProjects/testing/"
-# get_input_object = get_input(r"\\pengtornado01.asia.schawk.com%5CTornado%5CTORNADO_TESTING%5C105191049%5C402284908%5C020_Supplied%5CA01%5CHD_P8 CARAMEL BISCUIT %26 CREAM 8x473mL_PS 8251678 ACS0521_KL.docx",document_location+"summa.docx")
-#
-# get_input_object()
+def get_gs1_elements():
+    gs1_objects = gs1_elements.objects.all().values()
+    gs1_elements_list = [gs1["gs1_element"] for gs1 in gs1_objects]
+    return gs1_elements_list
+

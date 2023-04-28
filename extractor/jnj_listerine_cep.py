@@ -4,7 +4,7 @@ from langid import classify
 from .excel_processing import *
 from dataclasses import dataclass, field
 from dateutil.parser import parse
-
+from .utils import GoogleTranslate , get_gs1_elements
 # ----------------------------------------------------------------------------------------
 # Loading model
 
@@ -90,10 +90,19 @@ class Listerine_CEP_Template:
 
     def final_dict(self, txt_list, classifier, probability=0.70, unwanted_txt_len=3, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
-        copy_elements_fixed = ["ADDRESS", "COUNTRY OF ORIGIN", "DESIGN_INSTRUCTIONS", "INGREDIENTS",
-                               "LOT_NUMBER", "MARKETING_CLAIM", "NET CONTENT", "OPENING_INSTRUCTIONS",
-                               "OTHER_INSTRUCTIONS", "RECYCLE_STATEMENT", "USAGE INSTRUCTION",
-                               "WARNING STATEMENT"]
+        # copy_elements_fixed = ["ADDRESS", "COUNTRY OF ORIGIN", "DESIGN_INSTRUCTIONS", "INGREDIENTS",
+        #                        "LOT_NUMBER", "MARKETING_CLAIM", "NET CONTENT", "OPENING_INSTRUCTIONS",
+        #                        "OTHER_INSTRUCTIONS", "RECYCLE_STATEMENT", "USAGE INSTRUCTION",
+        #                        "WARNING STATEMENT"]
+        try:
+            copy_elements_fixed = get_gs1_elements()
+            print(copy_elements_fixed,"**************")
+        except Exception as E:
+            print(E,"##############")
+            copy_elements_fixed = ["ADDRESS", "COUNTRY OF ORIGIN", "DESIGN_INSTRUCTIONS", "INGREDIENTS",
+                                   "LOT_NUMBER", "MARKETING_CLAIM", "NET CONTENT", "OPENING_INSTRUCTIONS",
+                                   "OTHER_INSTRUCTIONS", "RECYCLE_STATEMENT", "USAGE INSTRUCTION",
+                                   "WARNING STATEMENT"]
 
         key_replace_list = ()
 
@@ -170,8 +179,10 @@ class Listerine_CEP_Template:
                     gen_cate_dic.setdefault(classified_output, []).append({lang: value})
                 else:
                     gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
-        # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
-        gen_cate_dic["copyElements"] = copy_elements_fixed
+        gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
+        # gen_cate_dic["copyElements"] = copy_elements_fixed
+        # print(get_gs1_elements(), "**************")
+        # gen_cate_dic["copyElements"] = list(set(get_gs1_elements()) - copy_elements)
         gen_cate_dic["languages"] = list(languages)
         return gen_cate_dic
 

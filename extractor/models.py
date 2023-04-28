@@ -63,6 +63,13 @@ class google_api(models.Model):
         verbose_name_plural = 'Google_api_logs'
         ordering = ['date']
 
+class gs1_elements(models.Model):
+    gs1_element = models.CharField(null=False,max_length=50)
+    enable = models.BooleanField(default=1)
+
+    class Meta:
+        verbose_name = 'gs1_element'
+        verbose_name_plural = 'gs1_elements'
 
 class logger(models.Model):
     # date = models.DateTimeField(default=datetime.datetime.now(IST))

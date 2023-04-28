@@ -1,6 +1,7 @@
 from bidi.algorithm import get_display
 from .excel_processing import *
 from sklearn.metrics.pairwise import cosine_similarity
+from .utils import GoogleTranslate , get_gs1_elements
 
 # model_loc = r"/Users/sakthivel/Documents/SGK/Ferrero_CEP/dataset/ferrero_cep_model.sav"
 # classifier = joblib.load(model_loc)
@@ -113,8 +114,8 @@ def final_dict(txt_list):
             else:
                 gen_cate_dic.setdefault(classified_output.upper(), []).append({lang: value})
     gen_cate_dic,languages,copy_elements = ingre_split_dict(gen_cate_dic,languages,copy_elements)
-    # gen_cate_dic["copyElements"] = list(set(copy_elements_fixed) - copy_elements)
-    gen_cate_dic["copyElements"] = copy_elements_fixed
+    gen_cate_dic["copyElements"] = list(set(get_gs1_elements()) - copy_elements)
+    # gen_cate_dic["copyElements"] = copy_elements_fixed
     gen_cate_dic["languages"] = list(languages)
     return gen_cate_dic
 
