@@ -5,6 +5,9 @@ from .excel_processing import *
 
 custom_replace_words = {"ΛΞΗ":"ΛΗΞΗ"}
 
+def brackets_replace(text):
+    return text.replace("<","&lt;").replace(">","&gt;")
+
 class msd_extraction(base):
     def __init__(self):
         super().__init__()
@@ -387,10 +390,14 @@ class msd_extraction(base):
                 if custom_val:
                     val = custom_val
                 ######### Custom patch
-                if prediction in final:
-                    final[prediction].append({lang: str(val)})
-                else:
-                    final[prediction] = [{lang: str(val)}]
+                ########  replace angle brackets
+                val = brackets_replace(val)
+                ########  replace angle brackets
+                if str(val).strip():
+                    if prediction in final:
+                        final[prediction].append({lang: str(val)})
+                    else:
+                        final[prediction] = [{lang: str(val)}]
             else:
                 for para in value[0].split('$$'):
                     # cleaned_text = para.translate(str.maketrans("", "", string.punctuation))
@@ -413,10 +420,14 @@ class msd_extraction(base):
                     if custom_val:
                         para = custom_val
                     ######### Custom patch
-                    if prediction in final:
-                        final[prediction].append({lang: para})
-                    else:
-                        final[prediction] = [{lang: para}]
+                    ########  replace angle brackets
+                    para = brackets_replace(para)
+                    ########  replace angle brackets
+                    if str(para).strip():
+                        if prediction in final:
+                            final[prediction].append({lang: para})
+                        else:
+                            final[prediction] = [{lang: para}]
         if 'None' in final:
             final['unmapped'] = final['None']
             final.pop('None', None)
