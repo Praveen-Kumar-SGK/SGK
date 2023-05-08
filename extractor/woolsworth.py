@@ -378,7 +378,7 @@ def attribute(input_pdf,pages,text):
     output_io = io.StringIO()
     with open(input_pdf,'rb') as input:
                         extract_text_to_fp(input, output_io,page_numbers= [int(pages)-1],
-                                           laparams=LAParams(line_margin=0.18, line_overlap=0.4, all_texts=False),
+                                           laparams=LAParams(line_margin=0.15, line_overlap=0.4, all_texts=False),
                                            output_type='html', codec=None)
 
     html = BeautifulSoup(output_io.getvalue(), 'html.parser')
