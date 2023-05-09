@@ -1,5 +1,4 @@
 import fitz
-import pdfplumber
 from tempfile import TemporaryDirectory
 from .utils import GetInput
 from .excel_processing import document_location
@@ -13,13 +12,11 @@ def capture_annotations(input_file:str,pages:str) -> dict:
     temp_pdf = f"{temp_dir.name}/input.pdf"
     input_file = GetInput(input_file,temp_pdf).get_from_smb()
     doc = fitz.Document(input_file)
-    plumb_pdf = pdfplumber.open(input_file)
     for page in range(doc.page_count):
         page_dict_list = []
         for a in doc[page].annots():
             annotation_type = a.info["subject"]
-            # annotated = str(doc[page].get_text("block",a.rect)).strip()
-            annotated = str(plumb_pdf.pages[page].within_bbox(list(a.rect),relative=False).extract_text()).strip()
+            annotated = str(doc[page].get_text("block",a.rect)).strip()
             comment = a.info["content"]
             page_dict_list.append({"type":annotation_type,"annotated":annotated,"comment":comment})
         if pages:
