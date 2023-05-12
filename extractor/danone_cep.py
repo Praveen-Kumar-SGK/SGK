@@ -113,7 +113,7 @@ class Danone_CEP_Template():
             return False
     # --------------------------------------------------------------------------------------------
     # Loading model
-    def load_model(model_location):
+    def load_model(self,model_location):
         return joblib.load(model_location)
 
     def final_dict(self, txt_list, model_location, probability=0.70, unwanted_txt_len=6, below_thres_class="Unmapped",
@@ -125,7 +125,7 @@ class Danone_CEP_Template():
                                 "OTHER_INSTRUCTIONS", "SERVING_SIZE", "STORAGE_INSTRUCTIONS",
                                "USAGE_INSTRUCTIONS", "WARNING_STATEMENTS","Unmapped"]
 
-        classifier = load_model(model_location)
+        classifier = self.load_model(model_location)
         gen_cate_dic = {}
         languages = set()
         copy_elements = set()
