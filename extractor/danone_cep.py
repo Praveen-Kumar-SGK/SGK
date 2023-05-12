@@ -10,9 +10,7 @@ from bidi.algorithm import get_display
 from .utils import GoogleTranslate , get_gs1_elements
 
 # -------------------------------------------------------------------------------------------
-# Loading model
-classifier = joblib.load(danone_cep_model_loc)
-
+model_location = danone_cep_model_loc
 # -------------------------------------------------------------------------------------------
 
 nutri_table_available = False
@@ -114,8 +112,11 @@ class Danone_CEP_Template():
         except ValueError:
             return False
     # --------------------------------------------------------------------------------------------
-    
-    def final_dict(self, txt_list, classifier, probability=0.70, unwanted_txt_len=6, below_thres_class="Unmapped",
+    # Loading model
+    def load_model(model_location):
+        return joblib.load(model_location)
+
+    def final_dict(self, txt_list, model_location, probability=0.70, unwanted_txt_len=6, below_thres_class="Unmapped",
                    language=None, key_replace_list=()):
         
 
@@ -124,6 +125,7 @@ class Danone_CEP_Template():
                                 "OTHER_INSTRUCTIONS", "SERVING_SIZE", "STORAGE_INSTRUCTIONS",
                                "USAGE_INSTRUCTIONS", "WARNING_STATEMENTS","Unmapped"]
 
+        classifier = load_model(model_location)
         gen_cate_dic = {}
         languages = set()
         copy_elements = set()
@@ -289,7 +291,7 @@ class Danone_CEP_Template():
                         output_dic['Nutrition'] = nutrition_response
         dic.pop('nutrition_data', None)
         txt_list = self.dict_to_list(dic)
-        output_dic = {**self.final_dict(txt_list, classifier), **output_dic}
+        output_dic = {**self.final_dict(txt_list, model_location=model_location), **output_dic}
         # print(output_dic)
         if nutrition_aws_mode == 1 or not nutri_table_available or nutrition_availability:
             return {**{'status': '0'}, **{
