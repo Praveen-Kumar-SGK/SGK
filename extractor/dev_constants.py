@@ -223,3 +223,6 @@ purina_excel_model_loc = r"/home/vijay/doc_extractor/model_dataset/purina_excel.
 
 ## quacker_pdf
 quacker_nutrition_model = r"/home/vijay/doc_extractor/model_dataset/quacker_Nutrition_model.sav"
+
+## danone_cep
+danone_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/danone_cep.sav"
