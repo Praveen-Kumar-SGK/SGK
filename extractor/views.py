@@ -618,7 +618,7 @@ def danone_cep(request):
     body = json.loads(json_response)
     print(body)
     try:
-        result = Danone_CEP_Template().cep_main(body)
+        result = Danone_CEP_Template().danone_cep_main(body)
     except Exception as E:
         logger(account_type="CEP", input_body={"account": "danone", "file": str(body)},
             output=str(E),error=str(E)).save()
