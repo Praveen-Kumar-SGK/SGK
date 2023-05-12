@@ -54,6 +54,7 @@ urlpatterns = [
     re_path(r"mondelez_cep\/$", views.mondelez_cep_view, name='mondelez_cep'),
     re_path(r"ai\/capture_annotation\/$", views.annotation_capture, name='annotation_capture'),
     re_path(r"ascensia_cep\/$", views.ascensia_cep, name='ascensia_cep'),
+    re_path(r"danone_cep\/$", views.danone_cep, name='danone_cep'),
 ]
 
 

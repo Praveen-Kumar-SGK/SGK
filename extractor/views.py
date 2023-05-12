@@ -82,6 +82,7 @@ from .jnj_listerine_cep import Listerine_CEP_Template
 from .mondelez_cep import Mondelez_CEP_Template
 from .mondelez_mea_plus_older_regions import mondelez_mea_word_main
 from .ascensia_cep import Ascensia_CEP_Template
+from .danone_cep import Danone_CEP_Template
 
 # annotation capture
 from .annotation_capture import capture_annotations_for_n_files
@@ -609,6 +610,21 @@ def ascensia_cep(request):
         return JsonResponse({})
     else:
         logger(account_type="CEP", input_body={"account":"ascensia", "file": str(body)}, output=str(result)).save()
+    return JsonResponse(result)
+
+@csrf_exempt
+def danone_cep(request):
+    json_response = request.body.decode('utf-8')
+    body = json.loads(json_response)
+    print(body)
+    try:
+        result = Danone_CEP_Template().cep_main(body)
+    except Exception as E:
+        logger(account_type="CEP", input_body={"account": "danone", "file": str(body)},
+            output=str(E),error=str(E)).save()
+        return JsonResponse({})
+    else:
+        logger(account_type="CEP", input_body={"account":"danone", "file": str(body)}, output=str(result)).save()
     return JsonResponse(result)
 
 @csrf_exempt
