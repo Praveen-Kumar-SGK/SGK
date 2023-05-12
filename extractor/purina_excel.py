@@ -20,7 +20,7 @@ laser = Laser(path_to_bpe_codes, path_to_bpe_vocab, path_to_encoder)
 #classifier model
 classifier=joblib.load(purina_excel_model_loc)
 
-#document_location='/Users/manirathinams/Documents/KT/Excel/Purina/Purina/Content_Export_000050FP-10-GRMT_MNPT_Bf_GiG_Pch50gFP_French_(BE+FR+CH)_2022-11-24_10_30_56.xlsx'
+#document_location='/Users/manirathinams/Documents/KT/Excel/Purina/Purina/excel.xlsx'
 
 # --------------------------------------------------------------------------------
 
