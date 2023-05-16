@@ -226,3 +226,7 @@ quacker_nutrition_model = r"/home/vijay/doc_extractor/model_dataset/quacker_Nutr
 
 ## danone_cep
 danone_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/danone_cep.sav"
+
+## Mead Johnson
+mead_johnson_general_model = r'/home/vijay/doc_extractor/model_dataset/mead_johnson_general.sav'
+mead_johnson_nutrition_model = r'/home/vijay/doc_extractor/model_dataset/mead_johnson_nutrition.sav'

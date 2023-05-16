@@ -69,6 +69,7 @@ from .j_and_j_processing import j_and_j_main
 from.henkal_cep import henkal_main
 
 from .conagra import conagra_main
+from .mead_johnson import mead_final_main
 
 from .ferrero_cep import ferrero_main
 from .sainsbury import sainsbury_main
@@ -767,7 +768,7 @@ class ai_hub(View):
 
     def docx_processing(self,file):
         docx_accounts = {"mondelez":mondelez_mea_word_main,"generalmills":main_gm,"unilever":unilever_docx_main,"kp":kp_main,'coke':coke_main,
-        				'conagra':conagra_main}
+        				'conagra':conagra_main, 'mead_johnson':mead_final_main}
         try:
             function = docx_accounts[self.account.lower()]
         except:
