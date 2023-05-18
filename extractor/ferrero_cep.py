@@ -243,47 +243,49 @@ def ferrero_main(dic):
     output_dic ={}
     nutrition_aws_mode = 0
     nutrition_manual_mode = 0
+    nutrition_availability = 0
     global nutri_table_available
     nutri_table_available = False
     if "modifyData" in dic:
         return dic["modifyData"]
     if "nutrition_data" in dic:
         if "tf_nutrition" in dic["nutrition_data"][0]:
-            nutrition_other_mode_check = 1
-            if isinstance(dic["nutrition_data"][0]['tf_nutrition'][0], str):
-                nutrition_aws_mode = 1
-            try:
-                key_variable = list(dic["nutrition_data"][0]['tf_nutrition'][0].keys())[0]
-
-                # print("key_variable--------->", key_variable)
-                if not key_variable.isnumeric():
-                    # print('manual format')
-                    nutrition_manual_mode = 1
-                    nutrition_aws_mode = 0
-                    xx = []
-                    for index, dictionary in enumerate(dic["nutrition_data"][0]['tf_nutrition']):
-                        d = {}
-                        for key, value in dictionary.items():
-                            d['1'] = key
-                            for ind, val in enumerate(value):
-                                d[ind + 2] = val
-                        xx.append(d)
-                    # print(f'xxxx----->{xx}')
-                    nutrition_response = nutrition_data_processing(xx, method='manual')
-                else:
-                    # print('semi-textract format')
-                    nutrition_response = nutrition_data_processing(dic["nutrition_data"][0]['tf_nutrition'])
+            nutrition_availability = 1
+            if dic["nutrition_data"][0]['tf_nutrition']:
+                if isinstance(dic["nutrition_data"][0]['tf_nutrition'][0], str):
                     nutrition_aws_mode = 1
-            except:
-                nutrition_response = {}
-                # return {'status': '0','nutrition':nutrition_response}
-            if nutrition_response and 'Nutrition' not in output_dic:
-                output_dic['Nutrition'] = nutrition_response
+                try:
+                    key_variable = list(dic["nutrition_data"][0]['tf_nutrition'][0].keys())[0]
+
+                    # print("key_variable--------->", key_variable)
+                    if not key_variable.isnumeric():
+                        # print('manual format')
+                        nutrition_manual_mode = 1
+                        nutrition_aws_mode = 0
+                        xx = []
+                        for index, dictionary in enumerate(dic["nutrition_data"][0]['tf_nutrition']):
+                            d = {}
+                            for key, value in dictionary.items():
+                                d['1'] = key
+                                for ind, val in enumerate(value):
+                                    d[ind + 2] = val
+                            xx.append(d)
+                        # print(f'xxxx----->{xx}')
+                        nutrition_response = nutrition_data_processing(xx, method='manual')
+                    else:
+                        # print('semi-textract format')
+                        nutrition_response = nutrition_data_processing(dic["nutrition_data"][0]['tf_nutrition'])
+                        nutrition_aws_mode = 1
+                except:
+                    nutrition_response = {}
+                    # return {'status': '0','nutrition':nutrition_response}
+                if nutrition_response and 'Nutrition' not in output_dic:
+                    output_dic['Nutrition'] = nutrition_response
     dic.pop('nutrition_data', None)
     txt_list = dict_to_list(dic)
     output_dic = {**final_dict(txt_list), **output_dic}
     print(output_dic)
-    if nutrition_aws_mode == 1 or not nutri_table_available:
+    if nutrition_aws_mode == 1 or not nutri_table_available or nutrition_availability:
         return {**{'status': '0'}, **{"modifyData": output_dic}} # Status "0" goes to CEP for edit option else go to tornado for xml generation
     elif nutrition_manual_mode == 1:
         return output_dic
