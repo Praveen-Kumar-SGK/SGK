@@ -210,10 +210,14 @@ def ingre_split_dict(dic,languages,copy_elements):
                         # lang = classify(final_text)[0]
                         copy_elements.add(classified_output)
                         languages.add(lang)
-                        if classified_output in final_dic:
-                            final_dic[classified_output].append({lang: final_text.strip()})
+                        if classified_output == "Unmapped":
+                            final_dic.setdefault(classified_output, []).append({lang: final_text.strip()})
                         else:
-                            final_dic[classified_output] = [{lang: final_text.strip()}]
+                            final_dic.setdefault(classified_output.upper(), []).append({lang: final_text.strip()})
+                        # if classified_output in final_dic:
+                        #     final_dic[classified_output].append({lang: final_text.strip()})
+                        # else:
+                        #     final_dic[classified_output] = [{lang: final_text.strip()}]
         else:
             for cnt in value:
                 if key in final_dic:
