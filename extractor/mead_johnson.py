@@ -65,7 +65,7 @@ def table_function(html_data):
         for row in table1.find_all("tr"):
             _row = []
             for column in row.find_all("td"):
-                column = str(column).replace('<strong>', 'lt;&bgt;').replace('</strong>', 'lt;&bgt;')
+                column = str(column).replace('<strong>', '&lt;b&gt;').replace('</strong>', '&lt;/b&gt;')
                 column = re.sub(r'<(?!b|\/b).*?>','',str(column))
                 column = re.sub(r'\<\/?br\/?\>','\n',str(column))
 #                 column = re.sub(r'\<.*?\>',' ',str(column))
@@ -83,7 +83,7 @@ def paragraph_function(html_dat):
         for img in html_dat.find_all("img"):
             img.decompose()
         for para1 in html_dat.find_all("p"):
-            para_gen = re.sub(r'<.*?>', '', str(para1).replace("<strong>","lt;&bgt;").replace("</strong>", "lt;/&bgt;").strip())
+            para_gen = re.sub(r'<.*?>', '', str(para1).replace('<strong>', '&lt;b&gt;').replace('</strong>', '&lt;/b&gt;').strip())
             para_content.append(para_gen)
         return para_content
 
@@ -121,7 +121,7 @@ def table_data_info(data, file):
                     classi_key = "UNMAPPED"
                 for d1 in range(len(val_nut)):
                     val_nutri = val_nut[d1].replace("\xa0","").strip()#.replace('lt;&bgt;','')
-                    val_nutri1 = val_nut[d1].replace("\xa0","").replace('lt;&bgt;','').strip()
+                    val_nutri1 = val_nut[d1].replace("\xa0","").replace('&lt;b&gt;','').replace('&lt;/b&gt;','').strip()
                     if val_nutri1:
                         if "%" in val_nutri1:
                             value_header = "PDV"
@@ -180,7 +180,7 @@ def para_data_info(data,file):
         elif "热线" in gen_cont or "hotline number" in gen_cont.lower().strip():
             contac_dic.setdefault("CONTACT_INFORMATION", []).append({classify(gen_cont)[0]:gen_cont.strip()})
         else:
-            clean_text = gen_cont.replace("lt;&bgt;","").replace("lt;/&bgt;","").replace("\xa0","").strip()
+            clean_text = gen_cont.replace('&lt;b&gt;','').replace('&lt;/b&gt;','').replace("\xa0","").strip()
             classifier_gen = load_model(gen_model)
             gen1 = classifier_gen.predict_proba(laser.embed_sentences(clean_text, lang = "en"))[0]
             gen1.sort()
