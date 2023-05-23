@@ -254,7 +254,7 @@ def griesson_processing(dictionary):
     final_dict["languages"] = list(languages)
     # final_dict["copyElements"] = list(copy_elements)
     final_dict["copyElements"] = list(set(copy_elements_fixed)-copy_elements)
-    if nutrition_aws_mode == 1:
+    if nutrition_aws_mode == 1 or nutrition_other_mode_check:
         return {**{'status':'0'},**{"modifyData":final_dict}}
     if nutrition_manual_mode == 1:
         return final_dict
