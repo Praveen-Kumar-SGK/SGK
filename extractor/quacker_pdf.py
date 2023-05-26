@@ -295,6 +295,7 @@ def quaker_main(input_file,pages):
     # Status
     input_file= get_input(input_file,input_pdf_location)
     pdf_to_image(input_file, temp_dir.name)
+    page_numbers = [int(x) for x in pages.split(",")]
     for page in page_numbers:
         temp = extract_list_text(input_file,temp_dir.name, str(page))
         net_weight = [*set(content for content in temp if 'net wt' in content.lower() or 'oz' in content.lower())]
