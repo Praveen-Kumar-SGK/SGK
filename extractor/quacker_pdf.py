@@ -318,7 +318,7 @@ def quaker_main(input_file,pages):
             gen = general(temp)
             if net_weight:
                 gen['NET_CONTENT'] = net_weight
-            output[page] = {**gen, **{'NUTRITION_TABLE': [nut]}}
+            output[page] = {**gen, **{'NUTRITION_FACTS': [nut]}}
 
 
         else:
