@@ -247,7 +247,7 @@ def nutri_keys_val(keys, values):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-# Net Content
+# General Information
 def general(data):
     keys = []
     values = []
@@ -255,31 +255,27 @@ def general(data):
     general_elements = {'label version': 'LABEL_VERSION',
                         '* the % daily value (dv)': 'NUTRITION_TABLE_DECLARATION',
                         'per container': 'SERVING_SIZE', 'serving size': 'SERVING_SIZE'}
-
     matches = ['oz', 'net wt', 'kg']
     for index, i in enumerate(data):
         if i.strip() == 'g)':
             data[index - 1] = data[index - 1] + data[index]
     for index, j in enumerate(data):
-        # if any(1 for k in matches if k in j.lower()) and 'and' not in j.lower():
-        #     nt = j.split('\n')
-        #     for n in nt:
-        #         if any(1 for k in matches if k in n.lower()):
-        #             nets.append(n.strip())
-        if j.startswith('CONTAINS') or j.startswith('MAY CONTAINS'):
+        temp = [ge for ge in general_elements if ge in j.lower() and 'disclose' not in j.lower() and len(j) < 200]
+        if any(1 for k in matches if k in j.lower()) and 'and' not in j.lower():
+            pass
+        elif j.startswith('CONTAINS') or j.startswith('MAY CONTAINS'):
             keys.append('ALLERGEN_STATEMENT')
             values.append([{classify(j)[0]: j}])
         elif j.lower().startswith('ingredients'):
             keys.append('INGREDIENTS_DECLARATION')
             values.append([{classify(j)[0]: j}])
+        elif temp:
+            for pe in temp:
+                keys.append(general_elements[pe])
+                values.append([{classify(j)[0]: j}])
         else:
-            for k in general_elements:
-                if k in j.lower() and 'disclose' not in j.lower() and len(j) < 200:
-                    keys.append(general_elements[k])
-                    values.append([{classify(j)[0]: j}])
-    # if nets:
-    #     keys.append('NET_CONTENT')
-    #     values.append([{classify(x)[0]: x.strip()} for x in nets])
+            keys.append('Unmapped')
+            values.append([{classify(j)[0]: j}])
     gen = {}
     for index, i in enumerate(keys):
         if i in gen:
@@ -287,6 +283,7 @@ def general(data):
         else:
             gen[i] = values[index]
     return gen
+
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -298,32 +295,36 @@ def quaker_main(input_file,pages):
     # Status
     input_file= get_input(input_file,input_pdf_location)
     pdf_to_image(input_file, temp_dir.name)
-    page_numbers = [int(x) for x in pages.split(",")]
     for page in page_numbers:
         temp = extract_list_text(input_file,temp_dir.name, str(page))
         net_weight = [*set(content for content in temp if 'net wt' in content.lower() or 'oz' in content.lower())]
         net_weight = [{classify(x)[0]:x.strip()} for x in net_weight]
         print(net_weight)
         data = data_extraction(input_file, page)
-        gen = general(data)
-        if net_weight:
-            gen['NET_CONTENT']=net_weight
         nutrition_data = nutri_data(data)
         nut = {}
         if nutrition_data:
             if data[nutrition_data[1]].startswith('Calories'):
+                temp = [want for want in data if want not in nutrition_data[0]]
                 keys, values = nutri_type2(nutrition_data[0])
 
 
             else:
+                temp = [want for want in data if want not in nutrition_data[0]]
                 keys, values = nutri_type1(nutrition_data[0])
 
             nut = nutri_keys_val(keys, values)
-            output[str(page)] = {**gen, **{'NUTRITION_FACTS': [nut]}}
+            gen = general(temp)
+            if net_weight:
+                gen['NET_CONTENT'] = net_weight
+            output[page] = {**gen, **{'NUTRITION_TABLE': [nut]}}
 
 
         else:
-            output[str(page)] = gen
+            gen=general(data)
+            if net_weight:
+                gen['NET_CONTENT'] = net_weight
+            output[page] = general(data)
 
     return output
 # ------------------------------------------------------------------------------------------------------------------
