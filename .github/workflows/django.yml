@@ -26,9 +26,15 @@ jobs:
     #- name: pulling code from github repo
       #run: git pull https://${GITHUB_TOKEN}@github.com/vj-kanagaraj/SGK-AI_DEV.git
       #run: git pull origin master
-      
+
+    - name: find the username
+      run: whoami
+
     - name: change directory to work folder
       run: cd doc_extractor/
+      
+    - name: fetch remote url
+      run: git remote -v
 
     - name: checking git status
       run: git status
