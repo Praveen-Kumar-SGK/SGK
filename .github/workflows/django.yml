@@ -24,7 +24,7 @@ jobs:
        # python-version: ${{ matrix.python-version }}
         
     - name: pulling code from github repo
-      run: git pull https://${secrets.pat}@github.com/vj-kanagaraj/SGK-AI_DEV.git
+      run: git pull https://${secrets.GITHUB_TOKEN}@github.com/vj-kanagaraj/SGK-AI_DEV.git
       #run: git pull origin master
       
 #     - name: Install Dependencies
