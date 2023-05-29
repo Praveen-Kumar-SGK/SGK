@@ -33,6 +33,9 @@ jobs:
     - name: change directory to work folder
       run: cd doc_extractor/
       
+    - name: set remote url
+      run: git remote set-url origin ssh://git@ssh.github.com:443/vj-kanagaraj/SGK-AI_DEV.git
+
     - name: fetch remote url
       run: git remote -v
 
