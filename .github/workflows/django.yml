@@ -27,9 +27,14 @@ jobs:
       #run: git pull https://${GITHUB_TOKEN}@github.com/vj-kanagaraj/SGK-AI_DEV.git
       #run: git pull origin master
       
+    - name: change directory to work folder
+      run: git status
+
+    - name: checking git status
+      run: git status
+      
     - name: Deploy to Linux Server
-      run: |
-          ssh vijay@172.28.42.150  "cd doc_extractor/ && git pull origin master"
+      run: git pull origin master
       
 #     - name: Install Dependencies
 #       run: |
