@@ -28,7 +28,7 @@ jobs:
       #run: git pull origin master
       
     - name: change directory to work folder
-      run: git status
+      run: cd doc_extractor/
 
     - name: checking git status
       run: git status
