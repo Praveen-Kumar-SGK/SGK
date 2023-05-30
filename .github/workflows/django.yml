@@ -37,20 +37,19 @@ jobs:
         if_key_exists: ignore
         known_hosts: ${{ secrets.SSH_HOST }}
         
-    - name: connect and pull
-      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && exit"
+#     - name: connect and pull
+#       run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && exit"
 
 
-      
     #- name: Adding Known Hosts
       #run: ssh-keyscan -H ${{ secrets.SSH_HOST }}{% endraw%} >> ~/.ssh/known_hosts
       
-#     - name: execute rsync command
-#       run: |
-#           rsync -avz \
-#             --exclude='.git/' \
-#             --exclude='*.pyc' \
-#             . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
+    - name: execute rsync command
+      run: |
+          rsync -avz \
+            --exclude='.git/' \
+            --exclude='*.pyc' \
+            ./SGK-AI_DEV ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
             
     #- name: Deploy with rsync
       #run: rsync -avz ./doc_extractor/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
