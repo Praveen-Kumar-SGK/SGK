@@ -22,7 +22,7 @@ jobs:
           
     - name: Add known host to SSH
       run: |
-          ssh-keyscan -H 172.28.42.150 >> ~/.ssh/known_hosts
+          echo '${{ secrets.SSH_HOST }}' >> ~/.ssh/known_hosts
 
 
     - name: Deploy to server
