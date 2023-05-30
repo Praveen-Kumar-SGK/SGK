@@ -47,9 +47,18 @@ jobs:
     - name: checking git status
       run: git status
       
-    - name: Deploy to Linux Server
-      run: git pull origin master
+    #- name: Deploy to Linux Server
+      #run: git pull origin master
       #run: git fetch --all
+      
+    
+    - name: Deploy to server
+      run: |
+          rsync -az --delete \
+            --exclude='.git/' \
+            --exclude='*.pyc' \
+            --exclude='static/' \
+            . vijay@172.28.42.150:doc_extractor/
       
 #     - name: Install Dependencies
 #       run: |
