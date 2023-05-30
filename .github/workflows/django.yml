@@ -40,9 +40,7 @@ jobs:
           rsync -avz \
             --exclude='.git/' \
             --exclude='*.pyc' \
-            --exclude='media/' \
-            --exclude='static/' \
-            ./doc_extractor ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
+            . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
             
     #- name: Deploy with rsync
       #run: rsync -avz ./doc_extractor/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
