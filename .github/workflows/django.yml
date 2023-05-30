@@ -30,16 +30,17 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         ssh-keyscan -H 172.28.42.150 > ~/.ssh/known_hosts
         
+    - name: Deploy to server
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        if_key_exists: ignore
+        known_hosts: ${{ secrets.SSH_HOST }}
+        
     - name: connect and pull
       run: ssh ${{ secrets.SSH_USER }}@172.28.42.150 "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && exit"
 
 
-#     - name: Deploy to server
-#       uses: shimataro/ssh-key-action@v2
-#       with:
-#         key: ${{ secrets.SSH_PRIVATE_KEY }}
-#         if_key_exists: ignore
-#         known_hosts: ${{ secrets.SSH_HOST }}
       
     #- name: Adding Known Hosts
       #run: ssh-keyscan -H ${{ secrets.SSH_HOST }}{% endraw%} >> ~/.ssh/known_hosts
