@@ -36,7 +36,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         if_key_exists: ignore
         known_hosts: ${{ secrets.SSH_HOST }}
-        script: |
+        run: |
           rsync -avz \
             --exclude='.git/' \
             --exclude='*.pyc' \
