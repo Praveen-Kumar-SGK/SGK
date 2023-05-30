@@ -24,6 +24,7 @@ jobs:
       uses: shimataro/ssh-key-action@v2
       with:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        if_key_exists: ignore
         known_hosts: ${{ secrets.SSH_HOST }}
       
     #- name: Adding Known Hosts
@@ -33,6 +34,7 @@ jobs:
       uses: shimataro/ssh-key-action@v2
       with:
         private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        if_key_exists: ignore
         script: |
           rsync -avz \
             --exclude='.git/' \
