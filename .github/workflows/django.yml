@@ -24,18 +24,14 @@ jobs:
 #       run: |
 #           echo '${{ secrets.SSH_HOST }}' >> ~/.ssh/known_hosts
 
+    - name: find pwd
+      run: pwd
+
     - name: Write SSH keys
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         ssh-keyscan -H 172.28.42.150 > ~/.ssh/known_hosts
-        
-    - name: Deploy to server
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        if_key_exists: ignore
-        known_hosts: ${{ secrets.SSH_HOST }}
         
     - name: Deploy to server
       uses: shimataro/ssh-key-action@v2
