@@ -46,10 +46,7 @@ jobs:
       
     - name: execute rsync command
       run: |
-          rsync -avz \
-            --exclude='.git/' \
-            --exclude='*.pyc' \
-            ./SGK-AI_DEV ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
+          rsync -avz ./SGK-AI_DEV ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
             
     #- name: Deploy with rsync
       #run: rsync -avz ./doc_extractor/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
