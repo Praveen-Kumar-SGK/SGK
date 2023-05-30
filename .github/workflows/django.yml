@@ -49,7 +49,7 @@ jobs:
           rsync -avz ./SGK-AI_DEV ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
             
     #- name: Deploy with rsync
-      #run: rsync -avz ./doc_extractor/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
+      #run: rsync -avz ./doc_extractor/ ${{ secrets.SSH_USER }}@172.28.42.150:/home/vijay/doc_extractor/
 
     #- name: Set up Python ${{ matrix.python-version }}
      # uses: actions/setup-python@v3
