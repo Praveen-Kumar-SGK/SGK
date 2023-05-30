@@ -1,0 +1,32 @@
+name: DEV_CI_CD
+
+on:
+  push:
+    branches: [ "master" ]
+#   pull_request:
+#     branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: self_hosted
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.6]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Deploy to Server
+      uses: appleboy/rsync-action@master
+      with:
+        args: -avz --exclude='.git'
+        src: ./
+        dest: vijay@172.28.42.150 :/home/vijay/doc_extractor/
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      
+    
+
