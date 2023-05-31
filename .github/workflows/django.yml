@@ -49,7 +49,10 @@ jobs:
           rsync -avz \
             --exclude='.git/' \
             --exclude='*.pyc' \
+            --exclude='*.sock' \
             --exclude='static/' \
+            --exclude='model_dataset/' \
+            --exclude='actions-runner/' \
             ./ ${{ secrets.SSH_USER }}@172.28.42.150:/home/vijay/doc_extractor/
         
 #     - name: connect and pull
