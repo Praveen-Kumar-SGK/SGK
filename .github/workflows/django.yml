@@ -49,8 +49,11 @@ jobs:
           rsync -avz \
             --exclude='.git/' \
             --exclude='*.pyc' \
+            --exclude='*.sock' \
             --exclude='static/' \
-            ./ ${{ secrets.SSH_USER }}@172.28.42.150:/home/vijay/doc_extractor/
+            --exclude='model_dataset/' \
+            --exclude='actions-runner/' \
+            /home/vijay/doc_extractor/ ${{ secrets.SSH_USER }}@172.28.42.150:/home/vijay/doc_extractor/
         
 #     - name: connect and pull
 #       run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && exit"
