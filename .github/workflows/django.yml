@@ -26,6 +26,12 @@ jobs:
 
     - name: find pwd
       run: pwd
+      
+    - name: changing directory
+      run: cd /home/vijay/doc_extractor/
+      
+    - name: find pwd
+      run: pwd
 
     - name: Write SSH keys
       run: |
