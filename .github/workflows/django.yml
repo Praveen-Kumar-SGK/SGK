@@ -3,8 +3,8 @@ name: SGK_AI_Dev_CI_CD_Pipeline
 on:
   push:
     branches: [ "master" ]
-  #pull_request:
-    #branches: [ "master" ]
+#   pull_request:
+#     branches: [ "master" ]
 
 jobs:
   build:
@@ -16,58 +16,9 @@ jobs:
         python-version: [3.6]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
           clean: true
-          
-#     - name: Add known host to SSH
-#       run: |
-#           echo '${{ secrets.SSH_HOST }}' >> ~/.ssh/known_hosts
-
-    - name: find pwd
-      run: pwd
-      
-    - name: changing directory
-      run: cd /home/vijay/doc_extractor/
-      
-    - name: find pwd
-      run: pwd
-
-    - name: Write SSH keys
-      run: |
-        install -m 600 -D /dev/null ~/.ssh/id_rsa
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        ssh-keyscan -H 172.28.42.150 > ~/.ssh/known_hosts
-        
-    - name: Deploy to server
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        if_key_exists: ignore
-        known_hosts: ${{ secrets.SSH_HOST }}
-        run: |
-          rsync -avz \
-            --exclude='.git/' \
-            --exclude='*.pyc' \
-            --exclude='*.sock' \
-            --exclude='static/' \
-            --exclude='model_dataset/' \
-            --exclude='actions-runner/' \
-            /home/vijay/doc_extractor/ ${{ secrets.SSH_USER }}@172.28.42.150:/home/vijay/doc_extractor/
-        
-#     - name: connect and pull
-#       run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && exit"
-
-
-    #- name: Adding Known Hosts
-      #run: ssh-keyscan -H ${{ secrets.SSH_HOST }}{% endraw%} >> ~/.ssh/known_hosts
-      
-#     - name: execute rsync command
-#       run: |
-#           rsync -avz -e "ssh -p 443" ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/vijay/doc_extractor/
-            
-    #- name: Deploy with rsync
-      #run: rsync -avz ./doc_extractor/ ${{ secrets.SSH_USER }}@172.28.42.150:/home/vijay/doc_extractor/
 
     #- name: Set up Python ${{ matrix.python-version }}
      # uses: actions/setup-python@v3
@@ -78,26 +29,29 @@ jobs:
       #run: git pull https://${GITHUB_TOKEN}@github.com/vj-kanagaraj/SGK-AI_DEV.git
       #run: git pull origin master
 
-    #- name: find the username
-      #run: whoami
-
-    #- name: change directory to work folder
-      #run: cd doc_extractor/
+    - name: find the username
+      run: whoami
       
-    #- name: change directory to work folder
-      #run: ls
+    - name: find the pwd
+      run: pwd
+
+    - name: change directory to work folder
+      run: cd /home/vijay/doc_extractor/
+      
+    - name: find the pwd
+      run: pwd
       
     #- name: set remote url
      # run: git remote set-url origin ssh://git@ssh.github.com:443/vj-kanagaraj/SGK-AI_DEV.git
 
-    #- name: fetch remote url
-      #run: git remote -v
+    - name: fetch remote url
+      run: git remote -v
 
-    #- name: checking git status
-      #run: git status
+    - name: checking git status
+      run: git status
       
-    #- name: Deploy to Linux Server
-      #run: git pull origin master
+    - name: Deploy to Linux Server
+      run: git pull origin master
       #run: git fetch --all
       
 #     - name: Install Dependencies
