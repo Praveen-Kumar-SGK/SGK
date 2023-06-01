@@ -195,4 +195,8 @@ def fontem_main(path,sheetnames):
         column_return_df = row_equal_func(columns, rows, df)
         diction = data_classification(column_return_df)
         final_dict[sheet_name] = diction
+    try:
+        temp_directory.cleanup()
+    except:
+        print("temp_folder not cleaned")
     return final_dict
