@@ -3,7 +3,10 @@ from .utils import GoogleTranslate , get_gs1_elements
 
 
 # model_loc = r"/Users/sakthivel/Documents/SGK/Henkal_CEP/henkal_cep_model.sav"
-classifier = joblib.load(henkal_model_location)
+# classifier = joblib.load(henkal_model_location)
+
+def load_classifier(model_location=henkal_model_location):
+    return joblib.load(model_location)
 
 def dict_to_list(dictionary):
     final_list = []
@@ -39,7 +42,22 @@ def text_preprocessing(text):
     text = re.sub(r"\[.*\]","",text)
     return text.strip()
 
+def bold_sequence(text):
+    tags = re.findall(r"b\$[01]", text, flags=re.M)
+    temp_tags = tags.copy()
+    index_to_ignore = []
+    for index, tag in enumerate(temp_tags):
+        if index not in index_to_ignore:
+            if tag == "b$1" and index == 0:
+                text = "".join(["b$0", text])
+            elif tag == "b$0" and index == range(len(tags))[-1]:
+                text = "".join([text, "b$1"])
+            elif tag == "b$0" and temp_tags[index + 1] == "b$1":
+                index_to_ignore.append(index + 1)
+    return text
+
 def final_dict(txt_list):
+    classifier = load_classifier()
     copy_elements_fixed = ["COUNTRY OF ORIGIN", "USAGE INSTRUCTION", "ADDRESS", "SHELF_LIFE_STATEMENT",
                            "STORAGE INSTRUCTION", "ALLERGEN STATEMENT", "INGREDIENTS", "WARNING STATEMENT",
                            "COPYRIGHT_TRADEMARK_STATEMENT", "MARKETING_CLAIM", "OTHER_INSTRUCTIONS"]
@@ -75,6 +93,7 @@ def final_dict(txt_list):
             value = "".join((value, "i$1"))
         elif "i$1" in value and "i$0" not in value:
             value = "".join(("i$0", value))
+        value = bold_sequence(value)
         lang = classify(cleaned_txt)[0]
         copy_elements.add(classified_output)
         languages.add(lang)
@@ -87,6 +106,8 @@ def final_dict(txt_list):
     # gen_cate_dic["copyElements"] = copy_elements_fixed
     gen_cate_dic["languages"] = list(languages)
     return gen_cate_dic
+
+
 
 def henkal_main(dic):
     if "modifyData" in dic:
