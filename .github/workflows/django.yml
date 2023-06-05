@@ -61,7 +61,7 @@ jobs:
       #run: git fetch --all
       
     - name: Restart Gunicorn
-      uses: sharkdp/sharkeye-action@v2
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
