@@ -11,6 +11,7 @@ from django.views.static import serve
 
 urlpatterns = [
     # re_path(r"home\/$", views.home, name='home'),
+    re_path(r"health\/$", views.health, name='health'),
     re_path(r"msd\/$", views.msd, name='msd'),
     re_path(r"az\/$", views.astrazeneca, name='az'),
     re_path(r"ai\/$", views.ai_hub.as_view(), name='ai'),

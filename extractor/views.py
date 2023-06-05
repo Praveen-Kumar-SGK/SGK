@@ -100,6 +100,11 @@ import concurrent.futures
 from functools import partial
 from multiprocessing.pool import Pool
 
+
+def health(request):
+    return HttpResponse("I am alive")
+
+
 def msd(request):
     final_json = {}
     # getting value from query string

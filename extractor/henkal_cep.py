@@ -1,4 +1,4 @@
-from .excel_extraction import *
+from .excel_processing import *
 from .utils import GoogleTranslate , get_gs1_elements
 
 
