@@ -34,16 +34,16 @@ jobs:
       
     - name: find the pwd
       run: pwd
-      
-    - name: change directory
-      uses: appleboy/ssh-action@v0.1.10
+    
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.0
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.SSH_PORT }}
-        script: cd /home/vijay/doc_extractor/
-      
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        
+    - name: Restart Gunicorn
+      run: |
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/vijay/doc_extractor/"
+    
     - name: find the pwd
       run: pwd
       
@@ -60,14 +60,10 @@ jobs:
       run: git pull origin master
       #run: git fetch --all
       
-    - name: restart gunicorn
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.SSH_PORT }}
-        script: sudo systemctl restart gunicorn
+    - name: Restart Gunicorn
+      run: |
+        ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo systemctl restart gunicorn"
+    
       
 #     - name: Install Dependencies
 #       run: |
