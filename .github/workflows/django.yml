@@ -54,14 +54,14 @@ jobs:
       run: git pull origin master
       #run: git fetch --all
       
-    - name: Restart Gunicorn
-      uses: appleboy/ssh-action@master
+    - name: restart gunicorn
+      uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT }}
-        script: |
-          sudo systemctl restart gunicorn.service
+        script: sudo systemctl restart gunicorn
       
 #     - name: Install Dependencies
 #       run: |
