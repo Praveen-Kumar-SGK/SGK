@@ -16,6 +16,9 @@ jobs:
         python-version: [3.6]
 
     steps:
+    - name: removing all pycache files from server location
+      run: sudo find /home/vijay/doc_extractor/actions-runner/sgk-ai-dev/SGK-AI_DEV/SGK-AI_DEV -type d -name "__pycache__" -exec chmod 777 {} +
+    
     - uses: actions/checkout@v2
       with:
           clean: true
