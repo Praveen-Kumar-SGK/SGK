@@ -54,14 +54,14 @@ jobs:
       run: git pull origin master
       #run: git fetch --all
       
-    - name: Deploy to server
-      uses: shimataro/ssh-key-action@v2
+    - name: Restart Gunicorn
+      uses: appleboy/ssh-action@master
       with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        if_key_exists: ignore
-        known_hosts: ${{ secrets.SSH_HOST }}
-        run: |
-          sudo systemctl restart gunicorn
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          sudo systemctl restart gunicorn.service
       
 #     - name: Install Dependencies
 #       run: |
