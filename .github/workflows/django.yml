@@ -35,14 +35,13 @@ jobs:
     - name: find the pwd
       run: pwd
     
-    - name: Set up SSH
+    - name: change directory
       uses: webfactory/ssh-agent@v0.5.0
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-        
-    - name: Restart Gunicorn
-      run: |
-          ssh -o StrictHostKeyChecking=no -p 443 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/vijay/doc_extractor/"
+        ssh-strict: 'no'
+        script: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/vijay/doc_extractor/"
     
     - name: find the pwd
       run: pwd
