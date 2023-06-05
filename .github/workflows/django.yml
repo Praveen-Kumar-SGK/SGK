@@ -16,6 +16,12 @@ jobs:
         python-version: [3.6]
 
     steps:
+    - name: find the pwd
+      run: pwd
+      
+    - name: list all directories
+      run: ls
+      
     - uses: actions/checkout@v2
       with:
           clean: true
