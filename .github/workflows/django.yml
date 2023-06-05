@@ -42,7 +42,7 @@ jobs:
         
     - name: Restart Gunicorn
       run: |
-          ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/vijay/doc_extractor/"
+          ssh -o StrictHostKeyChecking=no -p 443 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/vijay/doc_extractor/"
     
     - name: find the pwd
       run: pwd
@@ -62,7 +62,7 @@ jobs:
       
     - name: Restart Gunicorn
       run: |
-        ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo systemctl restart gunicorn"
+        ssh -o StrictHostKeyChecking=no -p 443 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo systemctl restart gunicorn"
     
       
 #     - name: Install Dependencies
