@@ -16,9 +16,6 @@ jobs:
         python-version: [3.6]
 
     steps:
-    - name: change directory to work folder
-      run: sudo chmod -R 777 /home/vijay/doc_extractor/actions-runner/sgk-ai-dev/SGK-AI_DEV/SGK-AI_DEV/__pycache__
-      
     - uses: actions/checkout@v2
       with:
           clean: true
