@@ -34,9 +34,15 @@ jobs:
       
     - name: find the pwd
       run: pwd
-
-    - name: change directory to work folder
-      run: cd /home/vijay/doc_extractor/
+      
+    - name: change directory
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: cd /home/vijay/doc_extractor/
       
     - name: find the pwd
       run: pwd
