@@ -24,10 +24,6 @@ jobs:
      # uses: actions/setup-python@v3
       #with:
        # python-version: ${{ matrix.python-version }}
-        
-    #- name: pulling code from github repo
-      #run: git pull https://${GITHUB_TOKEN}@github.com/vj-kanagaraj/SGK-AI_DEV.git
-      #run: git pull origin master
 
     - name: find the username
       run: whoami
@@ -35,9 +31,6 @@ jobs:
     - name: find the pwd
       run: pwd
       
-    #- name: set remote url
-     # run: git remote set-url origin ssh://git@ssh.github.com:443/vj-kanagaraj/SGK-AI_DEV.git
-
     - name: fetch remote url
       run: git remote -v
 
@@ -48,13 +41,8 @@ jobs:
       run: git pull origin master
       #run: git fetch --all
       
-    - name: change directory
-      uses: webfactory/ssh-agent@v0.5.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-        ssh-strict: 'no'
-        script: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo systemctl restart gunicorn"
+    - name: restart gunicorn
+      run: sudo systemctl restart gunicorn.service
       
 #     - name: Install Dependencies
 #       run: |
