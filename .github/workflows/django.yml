@@ -60,6 +60,16 @@ jobs:
       run: git pull origin master
       #run: git fetch --all
       
+    - name: Restart Gunicorn
+      uses: sharkdp/sharkeye-action@v2
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        command: |
+          sudo systemctl restart gunicorn
+      
 #     - name: Install Dependencies
 #       run: |
 #         python -m pip install --upgrade pip
