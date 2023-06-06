@@ -102,7 +102,7 @@ from multiprocessing.pool import Pool
 
 
 def health(request):
-    return HttpResponse("Hey, I am alive")
+    return HttpResponse("yeahh!!!, I am alive")
 
 
 def msd(request):
