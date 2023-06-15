@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
+from django.utils.decorators import method_decorator
 
 # Rest framework import
 from rest_framework.views import APIView
@@ -889,5 +890,31 @@ def annotation_capture(request):
     files = request.GET.getlist('file', None)  # list
     pages = request.GET.getlist('pages', None)  # list
     return JsonResponse(capture_annotations_for_n_files(files,pages))
+
+@method_decorator(csrf_exempt,name="dispatch")
+class cep_single(View):
+    accounts = {'danone': Danone_CEP_Template().danone_cep_main,'ascensia': Ascensia_CEP_Template().cep_main,
+     'mondelez': Mondelez_CEP_Template().mondelez_cep_main,'jnj_listerine': Listerine_CEP_Template().listerine_cep_main,
+     'home_and_laundry': Home_and_laundry_CEP_Template().home_and_laundry_cep_main,     'pepsi': Pepsi_CEP_Template().pepsi_cep_main,
+     'cocacola': Cocacola_CEP_Template().cocacola_cep_main,     'kimberly': CEP_Template().kimberly_cep_main,
+     'beiersdorf': beiersdorf_cep_main,  'ferrero': ferrero_main, 'henkal': henkal_main, 'griesson': griesson_processing}
+
+    def post(self,request):
+        json_response = request.body.decode('utf-8')
+        body = json.loads(json_response)
+        account_name = body["acc_type"]
+        print("executing account name ---------->", account_name)
+        account_func = self.accounts.get(account_name,None)
+        if not account_func:
+            raise NotImplementedError(F"This {account_name} account is not yet implemented in single url functionality")
+        else:
+            try:
+                result = account_func(body['data'])
+                logger(account_type="CEP", input_body={"account": account_name, "file": str(body)},output=str(result)).save()
+                return JsonResponse(result)
+            except Exception as E:
+                logger(account_type="CEP", input_body={"account": account_name, "file": str(body)}, output=str(E),
+                       error=str(E)).save()
+                return JsonResponse({})
 
 
