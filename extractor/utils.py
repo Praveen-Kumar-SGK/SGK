@@ -4,6 +4,7 @@ from .models import google_api,gs1_elements
 from .custom_pipeline import LaserVectorizer
 import torch
 from torch.nn import functional
+from functools import lru_cache
 
 from environment import MODE
 
@@ -137,7 +138,7 @@ class GetInput:
         if self.clean_pdf_tag:
             self.clean_pdf()
         return self.final_location
-
+@lru_cache(maxsize=10)
 def get_gs1_elements():
     gs1_objects = gs1_elements.objects.all().values()
     gs1_elements_list = [gs1["gs1_element"] for gs1 in gs1_objects]
