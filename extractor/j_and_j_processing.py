@@ -133,3 +133,10 @@ def j_and_j_main(dic):
     txt_list = dict_to_list(dic)
     output_dic = final_dict(txt_list)
     return {**{'status':'0'},**{"modifyData":output_dic}}
+
+def j_and_j_main_single_url(dic):
+    if "modifyData" in dic:
+        return dic["modifyData"]
+    txt_list = dict_to_list({"data":dic})
+    output_dic = final_dict(txt_list)
+    return {**{'status':'0'},**{"modifyData":output_dic}}

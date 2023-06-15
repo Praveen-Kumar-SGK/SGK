@@ -65,7 +65,7 @@ from .General_mills_hd import main as main_gm
 
 from .docx_tag_content_extractor_for_tornado import docx_tag_extractor_for_tornado as docx_ext_tornado
 
-from .j_and_j_processing import j_and_j_main
+from .j_and_j_processing import j_and_j_main, j_and_j_main_single_url
 
 from.henkal_cep import henkal_main
 
@@ -897,12 +897,16 @@ class cep_single(View):
      'mondelez': Mondelez_CEP_Template().mondelez_cep_main,'jnj_listerine': Listerine_CEP_Template().listerine_cep_main,
      'home_and_laundry': Home_and_laundry_CEP_Template().home_and_laundry_cep_main,     'pepsi': Pepsi_CEP_Template().pepsi_cep_main,
      'cocacola': Cocacola_CEP_Template().cocacola_cep_main,     'kimberly': CEP_Template().kimberly_cep_main,
-     'beiersdorf': beiersdorf_cep_main,  'ferrero': ferrero_main, 'henkal': henkal_main, 'griesson': griesson_processing}
+     'beiersdorf': beiersdorf_cep_main,  'ferrero': ferrero_main, 'henkal': henkal_main, 'griesson': griesson_processing,
+     'jnj':j_and_j_main_single_url}
 
     def post(self,request):
         json_response = request.body.decode('utf-8')
         body = json.loads(json_response)
-        account_name = body["acc_type"]
+        account_name = body.get("acc_type","nil").lower()
+        print("executing account name ---------->",account_name)
+        if account_name == "nil":
+            return ValueError("Please provide account type in payload")
         print("executing account name ---------->", account_name)
         account_func = self.accounts.get(account_name,None)
         if not account_func:
