@@ -297,35 +297,38 @@ def quaker_main(input_file,pages):
     pdf_to_image(input_file, temp_dir.name)
     page_numbers = [int(x) for x in pages.split(",")]
     for page in page_numbers:
-        temp = extract_list_text(input_file,temp_dir.name, str(page))
-        net_weight = [*set(content for content in temp if 'net wt' in content.lower() or 'oz' in content.lower())]
-        net_weight = [{classify(x)[0]:x.strip()} for x in net_weight]
-        print(net_weight)
-        data = data_extraction(input_file, page)
-        nutrition_data = nutri_data(data)
-        nut = {}
-        if nutrition_data:
-            if data[nutrition_data[1]].startswith('Calories'):
-                temp = [want for want in data if want not in nutrition_data[0]]
-                keys, values = nutri_type2(nutrition_data[0])
+        with pdfplumber.open(input_file) as pdf:
+            if (page - 1) in range(len(pdf.pages)):
+                temp = extract_list_text(input_file,temp_dir.name, str(page))
+                net_weight = [*set(content for content in temp if 'net wt' in content.lower() or 'oz' in content.lower())]
+                net_weight = [{classify(x)[0]:x.strip()} for x in net_weight]
+                print(net_weight)
+                data = data_extraction(input_file, page)
+                nutrition_data = nutri_data(data)
+                nut = {}
+                if nutrition_data:
+                    if data[nutrition_data[1]].startswith('Calories'):
+                        temp = [want for want in data if want not in nutrition_data[0]]
+                        keys, values = nutri_type2(nutrition_data[0])
 
 
+                    else:
+                        temp = [want for want in data if want not in nutrition_data[0]]
+                        keys, values = nutri_type1(nutrition_data[0])
+
+                    nut = nutri_keys_val(keys, values)
+                    gen = general(temp)
+                    if net_weight:
+                        gen['NET_CONTENT'] = net_weight
+                    output[page] = {**gen, **{'NUTRITION_FACTS': [nut]}}
+
+
+                else:
+                    gen=general(data)
+                    if net_weight:
+                        gen['NET_CONTENT'] = net_weight
+                    output[page] = general(data)
             else:
-                temp = [want for want in data if want not in nutrition_data[0]]
-                keys, values = nutri_type1(nutrition_data[0])
-
-            nut = nutri_keys_val(keys, values)
-            gen = general(temp)
-            if net_weight:
-                gen['NET_CONTENT'] = net_weight
-            output[page] = {**gen, **{'NUTRITION_FACTS': [nut]}}
-
-
-        else:
-            gen=general(data)
-            if net_weight:
-                gen['NET_CONTENT'] = net_weight
-            output[page] = general(data)
-
+                output[page]={}
     return output
 # ------------------------------------------------------------------------------------------------------------------
