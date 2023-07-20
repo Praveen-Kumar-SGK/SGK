@@ -71,6 +71,7 @@ from.henkal_cep import henkal_main
 
 from .conagra import conagra_main
 from .mead_johnson import mead_final_main
+from .SC_Johnson_China import sc_johnson_cn_main
 
 from .ferrero_cep import ferrero_main
 from .sainsbury import sainsbury_main
@@ -765,7 +766,8 @@ class ai_hub(View):
                         'ferrero': ferrero_extraction().main,'magnum':Holanda_y_Magnum_main,'dg':Dollar_General().main,'gwf':gwf_main,
                         'coke':coco_cola().main,'campbellsarnotts':arnott_main,"pladis":pladis_main,"woolworths":woolsworth_main,
                         'aldiequator':aldi_page_routing,'pepsico':pepsico_pdf_main,'bng':bng_foods().main,"hormel":hp().main,
-                        'sainsbury':sainsbury_main,'heinz':heinz_main,"albertsonamer":albertson_amer_main,"quaker":quaker_main}
+                        'sainsbury':sainsbury_main,'heinz':heinz_main,"albertsonamer":albertson_amer_main,"quaker":quaker_main,
+                        "sc_johnson_cn":sc_johnson_cn_main}
         try:
             function = pdf_accounts[self.account.lower()]
         except:

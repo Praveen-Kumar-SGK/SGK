@@ -230,3 +230,6 @@ danone_cep_model_loc = r"/home/vijay/doc_extractor/model_dataset/danone_cep.sav"
 ## Mead Johnson
 mead_johnson_general_model = r'/home/vijay/doc_extractor/model_dataset/mead_johnson_general.sav'
 mead_johnson_nutrition_model = r'/home/vijay/doc_extractor/model_dataset/mead_johnson_nutrition.sav'
+
+## SC_Johnson_China
+sc_johnson_china = r'/home/vijay/doc_extractor/model_dataset/sc_johnson_china.sav'
