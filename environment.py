@@ -1,3 +1,3 @@
-#MODE = 'local'
+MODE = 'local'
 
-MODE = 'dev'
+# MODE = 'dev'
